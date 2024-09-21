@@ -1,6 +1,6 @@
 import 'package:amorfiapp/pages/archivemanagement.dart';
 import 'package:amorfiapp/pages/inputitem.dart';
-import 'package:amorfiapp/pages/orderdata.dart';
+import 'package:amorfiapp/pages/order_data.dart';
 import 'package:amorfiapp/pages/remainingstock.dart';
 import 'package:amorfiapp/shared/shared_values.dart';
 import 'package:amorfiapp/widgets/auto_image_slider.dart';
@@ -109,7 +109,7 @@ class _HomePageState extends State<HomePage> {
                                     color: blackColor.withOpacity(0.2),
                                     spreadRadius: 0.1,
                                     blurRadius: 5,
-                                    offset: Offset(0, 1),
+                                    offset: const Offset(0, 1),
                                   ),
                                 ],
                                 borderRadius: BorderRadius.circular(30),
@@ -166,7 +166,7 @@ class _HomePageState extends State<HomePage> {
                             color: blackColor.withOpacity(0.2),
                             spreadRadius: 0.1,
                             blurRadius: 5,
-                            offset: Offset(0, 1),
+                            offset: const Offset(0, 1),
                             ),
                             ],
                             borderRadius: BorderRadius.circular(30),

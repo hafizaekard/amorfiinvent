@@ -6,10 +6,10 @@ class BackButtonCustom extends StatelessWidget {
   final VoidCallback onPressed;
 
   const BackButtonCustom({
-    Key? key,
+    super.key,
     this.iconColor = Colors.white,
     required this.onPressed,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

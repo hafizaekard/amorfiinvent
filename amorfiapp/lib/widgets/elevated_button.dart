@@ -6,7 +6,8 @@ class ElevatedButtonCustom extends StatelessWidget {
   final Color color;
   final VoidCallback onPressed;
 
-  ElevatedButtonCustom({
+  const ElevatedButtonCustom({
+    super.key,
     required this.text,
     required this.color,
     required this.onPressed,
@@ -18,7 +19,7 @@ class ElevatedButtonCustom extends StatelessWidget {
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
         backgroundColor: color,
-        padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 30.0),
+        padding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 30.0),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8.0),
         ),

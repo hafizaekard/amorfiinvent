@@ -7,11 +7,11 @@ class TextFieldCustom extends StatelessWidget {
   final TextInputType keyboardType;
 
   const TextFieldCustom({
-    Key? key,
+    super.key,
     required this.controller,
     required this.hintText,
     this.keyboardType = TextInputType.text,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

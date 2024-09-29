@@ -59,4 +59,5 @@ class DefaultFirebaseOptions {
     projectId: 'amorfiinvent',
     storageBucket: 'amorfiinvent.appspot.com',
   );
+
 }

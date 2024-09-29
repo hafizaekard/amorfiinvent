@@ -2,14 +2,14 @@ import 'package:amorfiapp/shared/shared_values.dart';
 import 'package:amorfiapp/widgets/back_button_custom.dart';
 import 'package:flutter/material.dart';
 
-class ArchiveManagementPage extends StatefulWidget {
-  const ArchiveManagementPage({super.key});
+class PrivacyAndSecurityProductionPage extends StatefulWidget {
+  const PrivacyAndSecurityProductionPage({super.key});
 
   @override
-  State<ArchiveManagementPage> createState() => _ArchiveManagementPageState();
+  State<PrivacyAndSecurityProductionPage> createState() => _PrivacyAndSecurityProductionPageState();
 }
 
-class _ArchiveManagementPageState extends State<ArchiveManagementPage> {
+class _PrivacyAndSecurityProductionPageState extends State<PrivacyAndSecurityProductionPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,7 +29,7 @@ class _ArchiveManagementPageState extends State<ArchiveManagementPage> {
             const SizedBox(width: 5),
             Expanded(
               child: Text(
-                'Archive Management',
+                'Privacy and Security',
                 style: blueTextStyle.copyWith(
                   fontSize: 25,
                   fontWeight: semiBold,

@@ -1,10 +1,6 @@
 import 'package:amorfiapp/pages/ingredients_page.dart';
-import 'package:amorfiapp/pages/pin_ingredients.dart';
-import 'package:amorfiapp/pages/pin_production.dart';
 import 'package:amorfiapp/pages/production_page.dart';
 import 'package:amorfiapp/pages/sign_in_options.dart';
-import 'package:amorfiapp/pages/sign_in_page.dart'; // Pastikan untuk mengimpor halaman Sign In
-import 'package:amorfiapp/pages/sign_up_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
@@ -31,11 +27,9 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: '/',
       routes: {
-        '/': (context) => const SignUpPage(),
-        '/signin': (context) => const SignInPage(),
-        '/signInOptions': (context) => const SignInOptionsPage(),
-        '/pinProduction' : (context) => const PinProductionManagerPage(),
-        '/pinIngredients' : (context) => const PinIngredientsManagerPage(),
+        '/': (context) => const SignInOptionsPage(),
+        // '/signin': (context) => const SignInPage(),
+        // '/signInOptions': (context) => const SignInOptionsPage(),
         '/productionPage' : (context) => const ProductionPage(),
         '/ingredientsPage' : (context) => const IngredientsPage(),
       },

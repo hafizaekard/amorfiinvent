@@ -1,8 +1,11 @@
-import 'package:amorfiapp/shared/shared_values.dart';
-import 'package:flutter/material.dart';
 import 'dart:async';
 
+import 'package:amorfiapp/shared/shared_values.dart';
+import 'package:flutter/material.dart';
+
 class AutoImageSlider extends StatefulWidget {
+  const AutoImageSlider({super.key});
+
   @override
   _AutoImageSliderState createState() => _AutoImageSliderState();
 }
@@ -34,7 +37,7 @@ class _AutoImageSliderState extends State<AutoImageSlider> {
   }
 
   void _startTimer() {
-    _timer = Timer.periodic(Duration(seconds: 5), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 5), (timer) {
       if (_currentPage < imageUrls.length - 1) {
         _currentPage++;
       } else {
@@ -42,7 +45,7 @@ class _AutoImageSliderState extends State<AutoImageSlider> {
       }
       _pageController.animateToPage(
         _currentPage,
-        duration: Duration(milliseconds: 350),
+        duration: const Duration(milliseconds: 350),
         curve: Curves.easeIn,
       );
     });
@@ -91,8 +94,4 @@ class _AutoImageSliderState extends State<AutoImageSlider> {
       ),
     );
   }
-}
-
-void main() {
-  runApp(MaterialApp(home: AutoImageSlider()));
 }

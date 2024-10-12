@@ -3,7 +3,6 @@ import 'package:amorfiapp/pages/input_ingredients.dart';
 import 'package:amorfiapp/pages/input_recipe.dart';
 import 'package:amorfiapp/routes/custom_page_route.dart';
 import 'package:amorfiapp/shared/shared_values.dart';
-import 'package:amorfiapp/widgets/auto_image_slider.dart';
 import 'package:amorfiapp/widgets/ingredient_app_drawer.dart';
 import 'package:flutter/material.dart';
 
@@ -35,9 +34,7 @@ class _IngredientsPageState extends State<IngredientsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: whiteColor,
-        shadowColor: blackColor.withOpacity(1),
-        elevation: 0.5,
+        backgroundColor: creamColor,
         automaticallyImplyLeading: false,
         titleSpacing: 35,
         title: Row(
@@ -52,7 +49,7 @@ class _IngredientsPageState extends State<IngredientsPage> {
                     width: 30,
                     height: 30,
                     decoration: BoxDecoration(
-                      color: newpurpleColor,
+                      color: burnSiennaColor,
                       borderRadius: BorderRadius.circular(5),
                     ),
                     child: Center(
@@ -78,7 +75,7 @@ class _IngredientsPageState extends State<IngredientsPage> {
         ),
       ),
       drawer: const IngredientAppDrawer(),
-      backgroundColor: whiteColor,
+      backgroundColor: creamColor,
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Column(
@@ -97,15 +94,8 @@ class _IngredientsPageState extends State<IngredientsPage> {
                             child: Container(
                               width: 230,
                               decoration: BoxDecoration(
-                                color: whiteColor,
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: blackColor.withOpacity(0.2),
-                                    spreadRadius: 0.1,
-                                    blurRadius: 5,
-                                    offset: const Offset(0, 1),
-                                  ),
-                                ],
+                                color: beigeColor,
+                                
                                 borderRadius: BorderRadius.circular(30),
                               ),
                               child: InkWell(
@@ -125,7 +115,7 @@ class _IngredientsPageState extends State<IngredientsPage> {
                                           : index == 1
                                               ? Icons.receipt_rounded
                                               : Icons.archive_rounded,
-                                      color: newpurpleColor,
+                                      color: whiteColor,
                                       size: 50,
                                     ),
                                     Text(
@@ -134,7 +124,7 @@ class _IngredientsPageState extends State<IngredientsPage> {
                                           : index == 1
                                               ? 'Input Recipe'
                                               : 'Archive Management',
-                                      style: newpurpleTextStyle.copyWith(
+                                      style: blackTextStyle.copyWith(
                                         fontSize: 20,
                                         fontWeight: normal,
                                       ),
@@ -155,27 +145,11 @@ class _IngredientsPageState extends State<IngredientsPage> {
                       padding: const EdgeInsets.only(bottom: 20),
                       child: Container(
                         decoration: BoxDecoration(
-                          color: whiteColor,
-                          boxShadow: [
-                            BoxShadow(
-                              color: blackColor.withOpacity(0.2),
-                              spreadRadius: 0.1,
-                              blurRadius: 5,
-                              offset: const Offset(0, 1),
-                            ),
-                          ],
-                          borderRadius: const BorderRadius.only(
-                            topLeft: Radius.circular(30),
-                            bottomLeft: Radius.circular(30),
-                          ),
+                          color: creamColor,
+                          border: Border.all(color: charcoalColor),
+                          borderRadius: BorderRadius.circular(30),
                         ),
                       ),
-                    ),
-                  ),
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.only(bottom: 20),
-                      child: AutoImageSlider(),
                     ),
                   ),
                 ],

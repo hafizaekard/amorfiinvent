@@ -4,7 +4,6 @@ import 'package:amorfiapp/pages/production_archive_management.dart';
 import 'package:amorfiapp/pages/remaining_stock.dart';
 import 'package:amorfiapp/routes/custom_page_route.dart';
 import 'package:amorfiapp/shared/shared_values.dart';
-import 'package:amorfiapp/widgets/auto_image_slider.dart';
 import 'package:amorfiapp/widgets/production_app_drawer.dart';
 import 'package:flutter/material.dart';
 
@@ -46,8 +45,6 @@ class _ProductionPageState extends State<ProductionPage> {
     return Scaffold(
       appBar: AppBar(
   backgroundColor: whiteColor,
-  shadowColor: blackColor.withOpacity(1),
-  elevation: 0.5,
   automaticallyImplyLeading: false,
   titleSpacing: 35,
   title: Row(
@@ -62,7 +59,7 @@ class _ProductionPageState extends State<ProductionPage> {
               width: 30,
               height: 30,
               decoration: BoxDecoration(
-                color: newpurpleColor,
+                color: blueColor,
                 borderRadius: BorderRadius.circular(5),
               ),
               child: Center(
@@ -89,7 +86,7 @@ class _ProductionPageState extends State<ProductionPage> {
 ),
 
       drawer: const ProductionAppDrawer(),
-      backgroundColor: whiteColor,
+      backgroundColor: lightGreyColor,
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Column(
@@ -112,10 +109,9 @@ class _ProductionPageState extends State<ProductionPage> {
                                 boxShadow: [
                                   BoxShadow(
                                     color: blackColor.withOpacity(0.2),
-                                    spreadRadius: 0.1,
-                                    blurRadius: 5,
-                                    offset: const Offset(0, 1),
-                                  ),
+                                    blurRadius: 3,
+                                    
+                                  )
                                 ],
                                 borderRadius: BorderRadius.circular(30),
                               ),
@@ -139,14 +135,14 @@ class _ProductionPageState extends State<ProductionPage> {
                                       index == 0 ? Icons.system_update_alt_rounded :
                                       index == 1 ? Icons.receipt_rounded :
                                       index == 2 ? Icons.shelves : Icons.archive_rounded,
-                                      color: newpurpleColor,
+                                      color: blackColor,
                                       size: 50,
                                     ),
                                     Text(
                                       index == 0 ? 'Input Item' :
                                       index == 1 ? 'Order Data' :
                                       index == 2 ? 'Remaining Stock' : 'Archive Management',
-                                      style: newpurpleTextStyle.copyWith(
+                                      style: blackTextStyle.copyWith(
                                         fontSize: 20,
                                         fontWeight: normal,
                                       ),
@@ -169,22 +165,12 @@ class _ProductionPageState extends State<ProductionPage> {
                       child: Container(
                         decoration: BoxDecoration(
                           color: whiteColor,
-                          boxShadow: [
-                            BoxShadow(
-                              color: blackColor.withOpacity(0.2),
-                              spreadRadius: 0.1,
-                              blurRadius: 5,
-                              offset: const Offset(0, 1),
-                              ),
-                              ],
-                              borderRadius: const BorderRadius.only(topLeft: Radius.circular(30), bottomLeft: Radius.circular(30)),
+                          
+                              borderRadius: BorderRadius.circular(30),
                               ),
                         ),
                     )),
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.only(bottom: 20),
-                          child: AutoImageSlider())),
+                      
                 ],
               ),
             ),

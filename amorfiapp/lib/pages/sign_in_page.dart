@@ -1,11 +1,10 @@
-import 'package:amorfiapp/firebase_auth_implementation/firebase_auth_services.dart';
+import 'package:amorfiapp/helper/firebase_auth_services.dart';
 import 'package:amorfiapp/pages/forgot_password.dart';
 import 'package:amorfiapp/pages/sign_in_options.dart';
 import 'package:amorfiapp/pages/sign_up_page.dart';
 import 'package:amorfiapp/routes/custom_page_route.dart';
 import 'package:amorfiapp/shared/shared_values.dart';
 import 'package:amorfiapp/widgets/form_container.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class SignInPage extends StatefulWidget {
@@ -61,13 +60,13 @@ class _SignInPageState extends State<SignInPage> {
       _isLoading = true; // Set loading to true
     });
 
-    User? user = await _auth.signInWithEmailAndPassword(email, password);
+    bool user = await _auth.signInWithEmailAndPassword(email, password);
 
     setState(() {
       _isLoading = false; // Set loading to false
     });
 
-    if (user != null) {
+    if (user) {
       print("User successfully signed in");
        _navigateToPage(const SignInOptionsPage()); // Redirect to homepage
     } else {

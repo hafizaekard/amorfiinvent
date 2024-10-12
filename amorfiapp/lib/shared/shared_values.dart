@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 //Color
-Color blueColor = const Color(0xFF101753);
+Color blueColor = const Color(0xFF5D12D2);
 Color backgroundwhiteColor = const Color(0xFFFFFFFF);
-Color orangeColor =  const Color(0xFFFFA823);
+Color orangeColor =  const Color(0xFFFF8911);
 Color redColor = const Color(0xFFFF1E1E);
 Color greyColor = const Color(0xFF817F7F);
+Color lightGreyColor = const Color(0xFFF3F3F3);
 Color whiteColor = const Color(0xFFFFFFFF);
 Color blackColor = const Color(0xFF000000);
 Color transparentColor = const Color(0x00000000);
@@ -15,6 +16,11 @@ Color purpleColor = const Color(0xFFAD49E1);
 Color greenColor = const Color(0xFF9BEC00);
 Color bgpurpleColor= const Color(0xFFC8A1E0);
 Color newpurpleColor= const Color(0xFF9400FF);
+Color creamColor= const Color(0xFFFAF7F0);
+Color beigeColor= const Color (0xFFD8D2C2);
+Color burnSiennaColor= const Color (0xFFB17457);
+Color charcoalColor= const Color (0xFF4A4947);
+Color lightBlueColor= const Color (0xFFE1F5FE);
 
 //TextStyle
 TextStyle whiteTextStyle = GoogleFonts.inter(color: whiteColor);

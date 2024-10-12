@@ -1,3 +1,5 @@
+import 'package:amorfiapp/pages/edit_ingredient.dart';
+import 'package:amorfiapp/routes/custom_page_route.dart';
 import 'package:amorfiapp/shared/shared_values.dart';
 import 'package:amorfiapp/widgets/back_button_custom.dart';
 import 'package:amorfiapp/widgets/edit_button.dart';
@@ -13,6 +15,15 @@ class InputIngredientPage extends StatefulWidget {
 }
 
 class _InputIngredientPageState extends State<InputIngredientPage> {
+
+  void _navigateToPage(Widget page) {
+    Navigator.of(context).push(CustomPageRoute(page: page));
+  }
+
+  void _navigateToEditIngredientPage() {
+    _navigateToPage(const EditIngredientPage());
+  }
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,11 +33,11 @@ class _InputIngredientPageState extends State<InputIngredientPage> {
         elevation: 5,
         automaticallyImplyLeading: false,
         titleSpacing: 15,
-        actions: const [
-          EditButton(),
-          PrintButton(),
-          UpdateDataButton(),
-          Padding(padding: EdgeInsets.only(right: 20))// Memberikan jarak antara button dan tepi
+        actions: [
+          EditButton(onPressed: _navigateToEditIngredientPage),
+          const PrintButton(),
+          const UpdateDataButton(),
+          const Padding(padding: EdgeInsets.only(right: 20))// Memberikan jarak antara button dan tepi
         ],
         title: Row(
           children: [
@@ -48,7 +59,6 @@ class _InputIngredientPageState extends State<InputIngredientPage> {
           ],
         ),
       ),
-      
     );
   }
 }

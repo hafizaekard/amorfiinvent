@@ -129,11 +129,10 @@ class _SignInOptionsPageState extends State<SignInOptionsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: yellowColor,
-        shadowColor: blackColor.withOpacity(1),
-        elevation: 5,
+        backgroundColor: newBlueColor,
+        shape: Border(bottom: BorderSide(color: blueColor.withOpacity(0.2))),
         automaticallyImplyLeading: false,
-        titleSpacing: 30,
+        titleSpacing: 15,
         title: Row(
           children: [
             const SizedBox(width: 5),
@@ -149,7 +148,7 @@ class _SignInOptionsPageState extends State<SignInOptionsPage> {
           ],
         ),
       ),
-      backgroundColor: whiteColor,
+      backgroundColor: lightGreyColor,
       body: Stack(
         children: [
           Column(
@@ -173,7 +172,7 @@ class _SignInOptionsPageState extends State<SignInOptionsPage> {
           ),
           if (isLoading)
             Container(
-              color: Colors.black.withOpacity(0.5),
+              color: blackColor.withOpacity(0.5),
               child: const Center(
                 child: CircularProgressIndicator(),
               ),
@@ -184,46 +183,102 @@ class _SignInOptionsPageState extends State<SignInOptionsPage> {
   }
 
   Widget _buildOptionContainer(int index) {
-    return Container(
-      height: 150,
-      width: 250,
-      decoration: BoxDecoration(
-        color: whiteColor,
-        boxShadow: [
-          BoxShadow(
-            color: blackColor.withOpacity(0.2),
-            spreadRadius: 0.1,
-            blurRadius: 5,
-            offset: const Offset(0, 1),
-          ),
-        ],
-        borderRadius: BorderRadius.circular(30),
+    return FutureBuilder<String>(
+      future: FirestoreHelper().getImage(
+        index == 0 ? 'production_manager' : 'ingredients_manager'
       ),
-      child: InkWell(
-        onTap: () => _showPinDialog(index == 0),
-        highlightColor: transparentColor,
-        splashColor: transparentColor,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.system_update_alt_rounded,
-              color: newpurpleColor,
-              size: 50,
-            ),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 10),
-              child: Text(
-                index == 0 ? 'Production Manager' : 'Ingredients Manager',
-                style: newpurpleTextStyle.copyWith(
-                  fontSize: 20,
-                  fontWeight: normal,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Container(
+            height: 120,
+            width: 150,
+            decoration: BoxDecoration(
+              color: whiteColor,
+              boxShadow: [
+                BoxShadow(
+                  color: blackColor.withOpacity(0.2),
+                  spreadRadius: 0.1,
+                  blurRadius: 5,
+                  offset: const Offset(0, 1),
                 ),
+              ],
+              borderRadius: BorderRadius.circular(30),
+            ),
+            child: const Center(child: CircularProgressIndicator()),
+          );
+        }
+
+        if (snapshot.hasError) {
+          return Container(
+            height: 120,
+            width: 150,
+            decoration: BoxDecoration(
+              color: whiteColor,
+              boxShadow: [
+                BoxShadow(
+                  color: blackColor.withOpacity(0.2),
+                  spreadRadius: 0.1,
+                  blurRadius: 5,
+                  offset: const Offset(0, 1),
+                ),
+              ],
+              borderRadius: BorderRadius.circular(30),
+            ),
+            child: Center(child: Text('Error: ${snapshot.error}')),
+          );
+        }
+
+        if (!snapshot.hasData) {
+          return Container(
+            height: 120,
+            width: 150,
+            decoration: BoxDecoration(
+              color: whiteColor,
+              boxShadow: [
+                BoxShadow(
+                  color: blackColor.withOpacity(0.2),
+                  spreadRadius: 0.1,
+                  blurRadius: 5,
+                  offset: const Offset(0, 1),
+                ),
+              ],
+              borderRadius: BorderRadius.circular(30),
+            ),
+            child: const Center(child: Text('No image')),
+          );
+        }
+
+        return InkWell(
+          onTap: () => _showPinDialog(index == 0),
+          highlightColor: transparentColor,
+          splashColor: transparentColor,
+          child: Container(
+            height: 120,
+            width: 150,
+            decoration: BoxDecoration(
+              color: whiteColor,
+              boxShadow: [
+                BoxShadow(
+                  color: blackColor.withOpacity(0.2),
+                  spreadRadius: 0.1,
+                  blurRadius: 5,
+                  offset: const Offset(0, 1),
+                ),
+              ],
+              borderRadius: BorderRadius.circular(30),
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(30),
+              child: Image.network(
+                snapshot.data!,
+                fit: BoxFit.cover,
+                width: double.infinity,
+                height: double.infinity,
               ),
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 }

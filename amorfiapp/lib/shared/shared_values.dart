@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 //Color
-Color blueColor = const Color(0xFF5D12D2);
+Color blueColor = const Color(0xFF3572EF);
 Color backgroundwhiteColor = const Color(0xFFFFFFFF);
 Color orangeColor =  const Color(0xFFFF8911);
 Color redColor = const Color(0xFFFF1E1E);
@@ -20,7 +20,7 @@ Color creamColor= const Color(0xFFFAF7F0);
 Color beigeColor= const Color (0xFFD8D2C2);
 Color burnSiennaColor= const Color (0xFFB17457);
 Color charcoalColor= const Color (0xFF4A4947);
-Color lightBlueColor= const Color (0xFFE1F5FE);
+Color newBlueColor= const Color (0xFFF1FBFF);
 
 //TextStyle
 TextStyle whiteTextStyle = GoogleFonts.inter(color: whiteColor);

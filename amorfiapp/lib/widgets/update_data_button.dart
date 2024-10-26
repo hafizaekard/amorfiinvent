@@ -47,7 +47,7 @@ class _UpdateDataButtonState extends State<UpdateDataButton> {
         width: 65,  // Adjust the size as per PrintButton
         height: 40, // Adjust the size as per PrintButton
         decoration: BoxDecoration(
-          color: blackColor, // Background color (adjust if needed)
+          color: blueColor, // Background color (adjust if needed)
           borderRadius: const BorderRadius.only(topRight: Radius.circular(8), bottomRight: Radius.circular(8)), // Border radius
         ),
         child: Icon(

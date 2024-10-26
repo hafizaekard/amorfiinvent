@@ -228,40 +228,42 @@ Future<void> _showSwitchAccountDialog() async {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      child: Column(
-        children: [
-          Container(
-            color: blueColor,
-            child: AppBar(
-              automaticallyImplyLeading: false,
-              title: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text('Profile', style: blackTextStyle.copyWith(fontSize: 20, fontWeight: semiBold)), // Judul AppBar
-                  InkWell(
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                    child: Container(
-                      width: 30,
-                      height: 30,
-                      decoration: BoxDecoration(
-                        color: newpurpleColor,
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      child: Center(
-                        child: Icon(
-                          Icons.menu_rounded,
-                          color: whiteColor,
-                          size: 25,
+      child: Container(
+        color: lightGreyColor, // Set background color to black
+        child: Column(
+          children: [
+            Container(
+              child: AppBar(
+                backgroundColor: newBlueColor,
+                automaticallyImplyLeading: false,
+                title: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('Profile', style: blackTextStyle.copyWith(fontSize: 20, fontWeight: semiBold)),
+                    InkWell(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      child: Container(
+                        width: 30,
+                        height: 30,
+                        decoration: BoxDecoration(
+                          color: blueColor,
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        child: Center(
+                          child: Icon(
+                            Icons.menu_rounded,
+                            color: whiteColor,
+                            size: 25,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
           UserAccountsDrawerHeader(
             accountName: Text(widget.userName ?? 'User Name', style: blackTextStyle),
             accountEmail: Text(widget.userEmail ?? 'email@example.com', style: blackTextStyle),
@@ -271,26 +273,24 @@ Future<void> _showSwitchAccountDialog() async {
                   : const AssetImage('assets/images/default_profile.png') as ImageProvider,
             ),
             decoration: BoxDecoration(
-              color: bgpurpleColor,
+              color: newBlueColor,
             ),
           ),
           ListTile(
             title: Text('Edit Profile', style: blackTextStyle.copyWith(fontSize: 16, fontWeight: normal)),
-            tileColor: bgpurpleColor,
             onTap: _navigateToEditProfileIngredientPage,
           ),
           ListTile(
             title: Text('Privacy and Security', style: blackTextStyle.copyWith(fontSize: 16, fontWeight: normal)),
-            tileColor: bgpurpleColor,
             onTap: _showPinDialog,
           ),
           ListTile(
             title: Text('Switch Account', style: blackTextStyle.copyWith(fontSize: 16, fontWeight: normal)),
-            tileColor: bgpurpleColor,
             onTap: _showSwitchAccountDialog,
           ),
         ],
       ),
+    ),
     );
   }
 }

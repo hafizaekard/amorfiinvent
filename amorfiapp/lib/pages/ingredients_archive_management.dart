@@ -14,9 +14,8 @@ class _IngredientsArchiveManagementPageState extends State<IngredientsArchiveMan
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: yellowColor,
-        shadowColor: blackColor.withOpacity(1),
-        elevation: 5,
+         backgroundColor: newBlueColor,
+        shape: Border(bottom: BorderSide(color: blueColor.withOpacity(0.2))),
         automaticallyImplyLeading: false,
         titleSpacing: 15,
         title: Row(

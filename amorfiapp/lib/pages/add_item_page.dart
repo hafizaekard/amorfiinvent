@@ -1,5 +1,6 @@
 import 'package:amorfiapp/shared/shared_values.dart';
 import 'package:amorfiapp/widgets/back_button_custom.dart';
+import 'package:amorfiapp/widgets/pick_image_button.dart';
 import 'package:flutter/material.dart';
 
 class AddItemPage extends StatefulWidget {
@@ -14,9 +15,8 @@ class _AddItemPageState extends State<AddItemPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: yellowColor,
-        shadowColor: blackColor.withOpacity(1),
-        elevation: 5,
+        backgroundColor: newBlueColor,
+        shape: Border(bottom: BorderSide(color: blueColor.withOpacity(0.2))),
         automaticallyImplyLeading: false,
         titleSpacing: 15,
         title: Row(
@@ -38,6 +38,10 @@ class _AddItemPageState extends State<AddItemPage> {
             ),
           ],
         ),
+      ),
+      backgroundColor: lightGreyColor,
+      body: const Center(
+        child: PickImage()
       ),
     );
   }

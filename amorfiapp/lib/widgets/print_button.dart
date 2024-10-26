@@ -41,7 +41,7 @@ class PrintButton extends StatelessWidget {
         width: 65,  // Sesuaikan dengan ukuran tombol 'UpdateDataButton'
         height: 40, // Sesuaikan dengan ukuran tombol 'UpdateDataButton'
         decoration: BoxDecoration(
-          color: blackColor, 
+          color: blueColor, 
         ),
         child: Icon(
           Icons.print_rounded, // Ikon print

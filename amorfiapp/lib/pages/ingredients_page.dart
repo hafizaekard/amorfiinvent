@@ -1,6 +1,6 @@
+import 'package:amorfiapp/helper/firestore_helper.dart';
 import 'package:amorfiapp/pages/ingredients_archive_management.dart';
-import 'package:amorfiapp/pages/input_ingredients.dart';
-import 'package:amorfiapp/pages/input_recipe.dart';
+import 'package:amorfiapp/pages/input_ingredient.dart';
 import 'package:amorfiapp/routes/custom_page_route.dart';
 import 'package:amorfiapp/shared/shared_values.dart';
 import 'package:amorfiapp/widgets/ingredient_app_drawer.dart';
@@ -22,10 +22,6 @@ class _IngredientsPageState extends State<IngredientsPage> {
     _navigateToPage(const InputIngredientPage());
   }
 
-  void _navigateToInputRecipePage() {
-    _navigateToPage(const InputRecipePage());
-  }
-
   void _navigateToIngredientsArchiveManagementPage() {
     _navigateToPage(const IngredientsArchiveManagementPage());
   }
@@ -34,7 +30,7 @@ class _IngredientsPageState extends State<IngredientsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: creamColor,
+        backgroundColor: newBlueColor,
         automaticallyImplyLeading: false,
         titleSpacing: 35,
         title: Row(
@@ -49,7 +45,7 @@ class _IngredientsPageState extends State<IngredientsPage> {
                     width: 30,
                     height: 30,
                     decoration: BoxDecoration(
-                      color: burnSiennaColor,
+                      color: blueColor,
                       borderRadius: BorderRadius.circular(5),
                     ),
                     child: Center(
@@ -75,89 +71,126 @@ class _IngredientsPageState extends State<IngredientsPage> {
         ),
       ),
       drawer: const IngredientAppDrawer(),
-      backgroundColor: creamColor,
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 20),
-            Expanded(
-              child: Row(
+      backgroundColor: lightGreyColor,
+      body: Stack(
+        children: [
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Column(
-                    children: [
-                      ...List.generate(3, (index) {
-                        return Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.only(bottom: 20),
-                            child: Container(
-                              width: 230,
-                              decoration: BoxDecoration(
-                                color: beigeColor,
-                                
-                                borderRadius: BorderRadius.circular(30),
-                              ),
-                              child: InkWell(
-                                onTap: index == 0
-                                    ? _navigateToInputIngredientPage
-                                    : index == 1
-                                        ? _navigateToInputRecipePage
-                                        : _navigateToIngredientsArchiveManagementPage,
-                                highlightColor: transparentColor,
-                                splashColor: transparentColor,
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(
-                                      index == 0
-                                          ? Icons.system_update_alt_rounded
-                                          : index == 1
-                                              ? Icons.receipt_rounded
-                                              : Icons.archive_rounded,
-                                      color: whiteColor,
-                                      size: 50,
-                                    ),
-                                    Text(
-                                      index == 0
-                                          ? 'Input Ingredient'
-                                          : index == 1
-                                              ? 'Input Recipe'
-                                              : 'Archive Management',
-                                      style: blackTextStyle.copyWith(
-                                        fontSize: 20,
-                                        fontWeight: normal,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        );
-                      }),
-                    ],
-                  ),
-                  const SizedBox(width: 20),
-                  Expanded(
-                    flex: 2,
-                    child: Padding(
-                      padding: const EdgeInsets.only(bottom: 20),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: creamColor,
-                          border: Border.all(color: charcoalColor),
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                      ),
-                    ),
-                  ),
+                  _buildOptionContainer(0),
+                  const SizedBox(width: 30),
+                  _buildOptionContainer(1),
                 ],
               ),
-            ),
-          ],
-        ),
+            ],
+          ),
+        ],
       ),
+    );
+  }
+
+  Widget _buildOptionContainer(int index) {
+    return FutureBuilder<String>(
+      future: FirestoreHelper().getImage(
+        index == 0 ? 'input_ingredient' : 'archive_management',
+      ),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Container(
+            height: 120,
+            width: 150,
+            decoration: BoxDecoration(
+              color: whiteColor,
+              boxShadow: [
+                BoxShadow(
+                  color: blackColor.withOpacity(0.2),
+                  spreadRadius: 0.1,
+                  blurRadius: 5,
+                  offset: const Offset(0, 1),
+                ),
+              ],
+              borderRadius: BorderRadius.circular(30),
+            ),
+            child: const Center(child: CircularProgressIndicator()),
+          );
+        }
+
+        if (snapshot.hasError) {
+          return Container(
+            height: 120,
+            width: 230,
+            decoration: BoxDecoration(
+              color: whiteColor,
+              boxShadow: [
+                BoxShadow(
+                  color: blackColor.withOpacity(0.2),
+                  spreadRadius: 0.1,
+                  blurRadius: 5,
+                  offset: const Offset(0, 1),
+                ),
+              ],
+              borderRadius: BorderRadius.circular(30),
+            ),
+            child: Center(child: Text('Error: ${snapshot.error}')),
+          );
+        }
+
+        if (!snapshot.hasData) {
+          return Container(
+            height: 150,
+            width: 230,
+            decoration: BoxDecoration(
+              color: whiteColor,
+              boxShadow: [
+                BoxShadow(
+                  color: blackColor.withOpacity(0.2),
+                  spreadRadius: 0.1,
+                  blurRadius: 5,
+                  offset: const Offset(0, 1),
+                ),
+              ],
+              borderRadius: BorderRadius.circular(30),
+            ),
+            child: const Center(child: Text('No image')),
+          );
+        }
+
+        // Mengembalikan widget ketika snapshot memiliki data
+        return Container(
+          height: 150,
+          width: 230,
+          decoration: BoxDecoration(
+            color: whiteColor,
+            image: DecorationImage(
+              image: NetworkImage(snapshot.data!), // Menampilkan gambar dari data
+              fit: BoxFit.cover,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: blackColor.withOpacity(0.2),
+                spreadRadius: 0.1,
+                blurRadius: 5,
+                offset: const Offset(0, 1),
+              ),
+            ],
+            borderRadius: BorderRadius.circular(30),
+          ),
+          child: InkWell(
+          onTap: () {
+            // Logika navigasi berdasarkan index
+            if (index == 0) {
+              _navigateToInputIngredientPage();
+            } else {
+              _navigateToIngredientsArchiveManagementPage();
+            }
+          },
+        ),
+        );
+      },
     );
   }
 }

@@ -11,7 +11,7 @@ class EditButton extends StatelessWidget {
     return ElevatedButton(
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
-        backgroundColor: blackColor,
+        backgroundColor: blueColor,
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.only(topLeft: Radius.circular(8), bottomLeft: Radius.circular(8)), // Sudut button

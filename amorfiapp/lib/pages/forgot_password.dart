@@ -52,9 +52,8 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: yellowColor,
-        shadowColor: blackColor.withOpacity(1),
-        elevation: 5,
+        backgroundColor: newBlueColor,
+        shape: Border(bottom: BorderSide(color: blueColor.withOpacity(0.2))),
         automaticallyImplyLeading: false,
         titleSpacing: 15,
         title: Row(
@@ -101,7 +100,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                   : ElevatedButton(
                       onPressed: _resetPassword,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: blackColor,
+                        backgroundColor: blueColor,
                         padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 15),
                       ),
                       child: Text(

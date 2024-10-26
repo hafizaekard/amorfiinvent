@@ -1,6 +1,4 @@
-import 'package:amorfiapp/pages/ingredients_page.dart';
-import 'package:amorfiapp/pages/production_page.dart';
-import 'package:amorfiapp/pages/sign_in_options.dart';
+import 'package:amorfiapp/pages/sign_up_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
@@ -25,14 +23,15 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      initialRoute: '/',
-      routes: {
-        '/': (context) => const SignInOptionsPage(),
-        // '/signin': (context) => const SignInPage(),
-        // '/signInOptions': (context) => const SignInOptionsPage(),
-        '/productionPage' : (context) => const ProductionPage(),
-        '/ingredientsPage' : (context) => const IngredientsPage(),
-      },
+      home: const SignUpPage(),
+      // initialRoute: '/',
+      // routes: {
+      //   '/': (context) => const SignInOptionsPage(),
+      //   // '/signin': (context) => const SignInPage(),
+      //   // '/signInOptions': (context) => const SignInOptionsPage(),
+      //   '/productionPage' : (context) => const ProductionPage(),
+      //   '/ingredientsPage' : (context) => const IngredientsPage(),
+      // },
     );
   }
 }

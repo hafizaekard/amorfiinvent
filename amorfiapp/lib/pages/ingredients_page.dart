@@ -1,5 +1,6 @@
 import 'package:amorfiapp/helper/firestore_helper.dart';
 import 'package:amorfiapp/pages/ingredients_archive_management.dart';
+import 'package:amorfiapp/pages/ingredients_management.dart';
 import 'package:amorfiapp/pages/input_ingredient.dart';
 import 'package:amorfiapp/routes/custom_page_route.dart';
 import 'package:amorfiapp/shared/shared_values.dart';
@@ -22,10 +23,18 @@ class _IngredientsPageState extends State<IngredientsPage> {
     _navigateToPage(const InputIngredientPage());
   }
 
-  void _navigateToIngredientsArchiveManagementPage() {
-    _navigateToPage(const IngredientsArchiveManagementPage());
+  void _navigateToIngredientsManagementPage() {
+    _navigateToPage(const IngredientsManagementPage());
   }
 
+  void _navigateToIngredientsArchiveManagementPage(String currentPage) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => IngredientsArchiveManagementPage(currentPage: currentPage),
+      ),
+    );
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -84,6 +93,8 @@ class _IngredientsPageState extends State<IngredientsPage> {
                   _buildOptionContainer(0),
                   const SizedBox(width: 30),
                   _buildOptionContainer(1),
+                  const SizedBox(width: 30),
+                  _buildOptionContainer(2),
                 ],
               ),
             ],
@@ -96,7 +107,8 @@ class _IngredientsPageState extends State<IngredientsPage> {
   Widget _buildOptionContainer(int index) {
     return FutureBuilder<String>(
       future: FirestoreHelper().getImage(
-        index == 0 ? 'input_ingredient' : 'archive_management',
+        index == 0 ? 'input_ingredient' : 
+        index == 1 ? 'item_management' : 'archive_management'
       ),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -108,9 +120,7 @@ class _IngredientsPageState extends State<IngredientsPage> {
               boxShadow: [
                 BoxShadow(
                   color: blackColor.withOpacity(0.2),
-                  spreadRadius: 0.1,
-                  blurRadius: 5,
-                  offset: const Offset(0, 1),
+                  blurRadius: 3,
                 ),
               ],
               borderRadius: BorderRadius.circular(30),
@@ -184,10 +194,15 @@ class _IngredientsPageState extends State<IngredientsPage> {
             // Logika navigasi berdasarkan index
             if (index == 0) {
               _navigateToInputIngredientPage();
-            } else {
-              _navigateToIngredientsArchiveManagementPage();
+            } else if (index == 1) {
+              _navigateToIngredientsManagementPage();
+            }else if (index == 2) {
+              _navigateToIngredientsArchiveManagementPage('Ingredients Archive');
             }
+
           },
+          highlightColor: transparentColor,
+          splashColor: transparentColor,
         ),
         );
       },

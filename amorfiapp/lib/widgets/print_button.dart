@@ -2,13 +2,19 @@ import 'package:amorfiapp/shared/shared_values.dart';
 import 'package:flutter/material.dart';
 
 class PrintButton extends StatelessWidget {
-  const PrintButton({super.key});
+  final BorderRadiusGeometry borderRadius; // Add a border radius property
+
+  // Update the constructor to accept a border radius
+  const PrintButton({
+    super.key,
+    this.borderRadius = const BorderRadius.only(topLeft: Radius.circular(8), bottomLeft: Radius.circular(8)), // Default value
+  });
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        // Aksi ketika tombol print diklik
+        // Action when the print button is clicked
         showDialog(
           context: context,
           builder: (BuildContext context) {
@@ -18,13 +24,13 @@ class PrintButton extends StatelessWidget {
               actions: [
                 TextButton(
                   onPressed: () {
-                    Navigator.of(context).pop(); // Menutup dialog
+                    Navigator.of(context).pop(); // Close dialog
                   },
                   child: const Text('Cancel'),
                 ),
                 TextButton(
                   onPressed: () {
-                    // Aksi ketika pengguna mengkonfirmasi pencetakan
+                    // Action when user confirms printing
                     Navigator.of(context).pop();
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text('Printing...')),
@@ -38,15 +44,18 @@ class PrintButton extends StatelessWidget {
         );
       },
       child: Container(
-        width: 65,  // Sesuaikan dengan ukuran tombol 'UpdateDataButton'
-        height: 40, // Sesuaikan dengan ukuran tombol 'UpdateDataButton'
+        width: 65,  // Adjust to fit your needs
+        height: 40, // Adjust to fit your needs
         decoration: BoxDecoration(
-          color: blueColor, 
+          color: blueColor,
+          borderRadius: borderRadius, // Use the custom border radius
         ),
-        child: Icon(
-          Icons.print_rounded, // Ikon print
-          size: 30, // Ukuran ikon
-          color: whiteColor,// Warna ikon (ubah jika diperlukan)
+        child: Center(
+          child: Icon(
+            Icons.print_rounded, // Print icon
+            size: 30, // Icon size
+            color: whiteColor, // Icon color (change if needed)
+          ),
         ),
       ),
     );

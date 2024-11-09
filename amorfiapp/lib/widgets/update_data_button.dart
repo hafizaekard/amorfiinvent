@@ -1,15 +1,12 @@
 import 'package:amorfiapp/shared/shared_values.dart';
 import 'package:flutter/material.dart';
 
-class UpdateDataButton extends StatefulWidget {
-  const UpdateDataButton({super.key});
+class UpdateDataButton extends StatelessWidget {
+  final VoidCallback? onPressed; // Define an onPressed callback
 
-  @override
-  State<UpdateDataButton> createState() => _UpdateDataButtonState();
-}
+  const UpdateDataButton({super.key, this.onPressed}); // Accept onPressed as a parameter
 
-class _UpdateDataButtonState extends State<UpdateDataButton> {
-  void _showUpdateDialog() {
+  void _showUpdateDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -30,6 +27,7 @@ class _UpdateDataButtonState extends State<UpdateDataButton> {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('Data is updating...')),
                 );
+                onPressed?.call(); // Call the passed in onPressed function
               },
               child: const Text('Update'),
             ),
@@ -42,7 +40,7 @@ class _UpdateDataButtonState extends State<UpdateDataButton> {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: _showUpdateDialog, // Show dialog when button is clicked
+      onTap: () => _showUpdateDialog(context), // Show dialog when button is clicked
       child: Container(
         width: 65,  // Adjust the size as per PrintButton
         height: 40, // Adjust the size as per PrintButton
@@ -50,10 +48,12 @@ class _UpdateDataButtonState extends State<UpdateDataButton> {
           color: blueColor, // Background color (adjust if needed)
           borderRadius: const BorderRadius.only(topRight: Radius.circular(8), bottomRight: Radius.circular(8)), // Border radius
         ),
-        child: Icon(
-          Icons.autorenew_rounded, // Refresh icon
-          size: 30, // Icon size
-          color: whiteColor, // Icon color
+        child: Center(
+          child: Icon(
+            Icons.autorenew_rounded, // Refresh icon
+            size: 30, // Icon size
+            color: whiteColor, // Icon color
+          ),
         ),
       ),
     );

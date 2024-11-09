@@ -1,6 +1,8 @@
-import 'package:amorfiapp/pages/sign_up_page.dart';
+import 'package:amorfiapp/controller/image_notifier.dart';
+import 'package:amorfiapp/pages/sign_in_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'firebase_options.dart';
 
@@ -17,21 +19,24 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Amorfi Invent',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
+    return ChangeNotifierProvider(
+      create: (context) => ImageNotifier(),
+      child: MaterialApp(
+        title: 'Amorfi Invent',
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          useMaterial3: true,
+        ),
+        home: SignInOptionsPage(),
+        // initialRoute: '/',
+        // routes: {
+        //   '/': (context) => const SignInOptionsPage(),
+        //   // '/signin': (context) => const SignInPage(),
+        //   // '/signInOptions': (context) => const SignInOptionsPage(),
+        //   '/productionPage' : (context) => const ProductionPage(),
+        //   '/ingredientsPage' : (context) => const IngredientsPage(),
+        // },
       ),
-      home: const SignUpPage(),
-      // initialRoute: '/',
-      // routes: {
-      //   '/': (context) => const SignInOptionsPage(),
-      //   // '/signin': (context) => const SignInPage(),
-      //   // '/signInOptions': (context) => const SignInOptionsPage(),
-      //   '/productionPage' : (context) => const ProductionPage(),
-      //   '/ingredientsPage' : (context) => const IngredientsPage(),
-      // },
     );
   }
 }

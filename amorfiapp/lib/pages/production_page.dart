@@ -1,5 +1,6 @@
 import 'package:amorfiapp/helper/firestore_helper.dart';
 import 'package:amorfiapp/pages/input_item.dart';
+import 'package:amorfiapp/pages/item_management.dart';
 import 'package:amorfiapp/pages/order_data.dart';
 import 'package:amorfiapp/pages/production_archive_management.dart';
 import 'package:amorfiapp/pages/remaining_stock.dart';
@@ -23,7 +24,7 @@ class _ProductionPageState extends State<ProductionPage> {
   void _navigateToInputItemPage() {
     _navigateToPage(const InputItemPage());
   }
-  
+
   void _navigateToOrderDataPage() {
     _navigateToPage(const OrderDataPage());
   }
@@ -32,8 +33,18 @@ class _ProductionPageState extends State<ProductionPage> {
     _navigateToPage(const RemainingStockPage());
   }
 
-  void _navigateToProductionArchiveManagementPage() {
-    _navigateToPage(const ProductionArchiveManagementPage());
+  // Updated to pass the currentPage parameter
+  void _navigateToProductionArchiveManagementPage(String currentPage) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ProductionArchiveManagementPage(currentPage: currentPage),
+      ),
+    );
+  }
+
+  void _navigateToItemManagementPage() {
+    _navigateToPage(const ItemManagementPage());
   }
 
   @override
@@ -75,7 +86,7 @@ class _ProductionPageState extends State<ProductionPage> {
               style: headerTextStyle.copyWith(
                 fontSize: 30,
                 fontWeight: semiBold,
-              )
+              ),
             ),
           ],
         ),
@@ -93,7 +104,7 @@ class _ProductionPageState extends State<ProductionPage> {
                 children: [
                   Column(
                     children: [
-                      ...List.generate(4, (index) {
+                      ...List.generate(5, (index) {
                         return Expanded(
                           child: Padding(
                             padding: const EdgeInsets.only(bottom: 20),
@@ -105,49 +116,61 @@ class _ProductionPageState extends State<ProductionPage> {
                                   BoxShadow(
                                     color: blackColor.withOpacity(0.2),
                                     blurRadius: 3,
-                                  )
+                                  ),
                                 ],
                                 borderRadius: BorderRadius.circular(30),
                               ),
                               child: InkWell(
-                                onTap: index == 0
-                                  ? _navigateToInputItemPage
-                                  : index == 1
-                                  ? _navigateToOrderDataPage
-                                  : index == 2
-                                  ? _navigateToRemainingStockPage
-                                  : index == 3
-                                  ? _navigateToProductionArchiveManagementPage
-                                  : null,
+                                onTap: () {
+                                  // Determine which page to navigate to
+                                  if (index == 0) {
+                                    _navigateToInputItemPage();
+                                  } else if (index == 1) {
+                                    _navigateToOrderDataPage();
+                                  } else if (index == 2) {
+                                    _navigateToRemainingStockPage();
+                                  } else if (index == 3) {
+                                    _navigateToItemManagementPage();
+                                  } else if (index == 4) {
+                                    // Pass 'Production Archive' as the current page
+                                    _navigateToProductionArchiveManagementPage('Production Archive');
+                                  }
+                                },
                                 highlightColor: transparentColor,
                                 splashColor: transparentColor,
-                                child:
-                                  FutureBuilder<String>(
-                                      future: FirestoreHelper().getImage(
-                                        index == 0 ? 'input_item' 
-                                        : index == 1 ? 'order_data' 
-                                        : index == 2 ? 'remaining_stock' : 'archive_management'),
-                                      builder: (context, snapshot) {
-                                        if (snapshot.connectionState == ConnectionState.waiting) {
-                                          return const Center(child: CircularProgressIndicator());
-                                        }
-                                        if (snapshot.hasError) {
-                                          return Center(child: Text('Error: ${snapshot.error}'));
-                                        }
-                                        if (!snapshot.hasData) {
-                                          return const Center(child: Text('No image'));
-                                        }
-                                        return ClipRRect(
-                                          borderRadius: BorderRadius.circular(30),
-                                          child: Image.network(
-                                            snapshot.data!,
-                                            fit: BoxFit.cover,
-                                            width: double.infinity,
-                                            height: double.infinity,
-                                          ),
-                                        );
-                                      },
-                                    ),
+                                child: FutureBuilder<String>(
+                                  future: FirestoreHelper().getImage(
+                                    index == 0
+                                        ? 'input_item'
+                                        : index == 1
+                                            ? 'order_data'
+                                            : index == 2
+                                                ? 'remaining_stock'
+                                                : index == 3
+                                                    ? 'item_management'
+                                                    : 'archive_management',
+                                  ),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState == ConnectionState.waiting) {
+                                      return const Center(child: CircularProgressIndicator());
+                                    }
+                                    if (snapshot.hasError) {
+                                      return Center(child: Text('Error: ${snapshot.error}'));
+                                    }
+                                    if (!snapshot.hasData) {
+                                      return const Center(child: Text('No image'));
+                                    }
+                                    return ClipRRect(
+                                      borderRadius: BorderRadius.circular(30),
+                                      child: Image.network(
+                                        snapshot.data!,
+                                        fit: BoxFit.cover,
+                                        width: double.infinity,
+                                        height: double.infinity,
+                                      ),
+                                    );
+                                  },
+                                ),
                               ),
                             ),
                           ),

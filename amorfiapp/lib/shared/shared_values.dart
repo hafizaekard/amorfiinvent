@@ -21,6 +21,8 @@ Color beigeColor= const Color (0xFFD8D2C2);
 Color burnSiennaColor= const Color (0xFFB17457);
 Color charcoalColor= const Color (0xFF4A4947);
 Color newBlueColor= const Color (0xFFF1FBFF);
+Color lightBlueColor= const Color (0xFFD2E0FB);
+Color lightYellowColor = const Color (0xFFFEF9D9);
 
 //TextStyle
 TextStyle whiteTextStyle = GoogleFonts.inter(color: whiteColor);
@@ -32,6 +34,7 @@ TextStyle blueTextStyle = GoogleFonts.inter(color: blueColor);
 TextStyle headerTextStyle = GoogleFonts.ebGaramond(color: blackColor);
 TextStyle newpurpleTextStyle = GoogleFonts.inter(color: newpurpleColor);
 TextStyle quotesTextStyle = GoogleFonts.lobster(color: yellowColor);
+TextStyle burnSiennaTextStyle = GoogleFonts.inter(color: burnSiennaColor);
 
 //FontWeight
 FontWeight thin = FontWeight.w100;

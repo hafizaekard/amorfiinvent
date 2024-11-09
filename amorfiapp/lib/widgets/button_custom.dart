@@ -1,11 +1,11 @@
 import 'package:amorfiapp/shared/shared_values.dart';
 import 'package:flutter/material.dart';
 
-class AddButton extends StatelessWidget {
+class ButtonCustom extends StatelessWidget {
   final String label;
   final VoidCallback onPressed;
 
-  const AddButton({
+  const ButtonCustom({
     super.key,
     required this.label, // Label akan menjadi judul tombol
     required this.onPressed, // Fungsi yang akan dipanggil saat tombol ditekan
@@ -27,7 +27,7 @@ class AddButton extends StatelessWidget {
         children: [
           Text(
             label, // Menggunakan label sebagai teks tombol
-            style: whiteTextStyle.copyWith(fontSize: 16, fontWeight: semiBold)
+            style: whiteTextStyle.copyWith(fontSize: 16, fontWeight: semiBold),
           ),
         ],
       ),

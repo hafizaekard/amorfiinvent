@@ -1,12 +1,14 @@
+import 'dart:io';
+
 import 'package:amorfiapp/controller/image_notifier.dart';
-import 'package:amorfiapp/helper/firestore_helper.dart';
+import 'package:amorfiapp/helper/image_picker_helper.dart';
 import 'package:amorfiapp/helper/storage_helper.dart';
 import 'package:amorfiapp/shared/shared_values.dart';
 import 'package:amorfiapp/widgets/back_button_custom.dart';
-import 'package:amorfiapp/widgets/pick_image_button.dart';
 import 'package:amorfiapp/widgets/save_button_custom.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 class EditIngredientPage extends StatefulWidget {
@@ -25,13 +27,16 @@ class EditIngredientPage extends StatefulWidget {
 
 class _EditIngredientPageState extends State<EditIngredientPage> {
   final StorageHelper _storageHelper = StorageHelper();
-  final FirestoreHelper _firestoreHelper = FirestoreHelper();
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   
   late TextEditingController _titleController;
   final TextEditingController _valueController = TextEditingController();
   bool _isLoading = false;
   late List<String> _values;
+
+  ImagePickerHelper imagePickerHelper = ImagePickerHelper();
+  File? image ;
+  String imageURL = "";
 
   @override
   void initState() {
@@ -47,13 +52,15 @@ class _EditIngredientPageState extends State<EditIngredientPage> {
     super.dispose();
   }
 
+  StorageHelper storageHelper = StorageHelper();
+
   Future<void> _updateIngredient() async {
     setState(() {
       _isLoading = true;
     });
 
     try {
-      String imageUrl = widget.ingredientData['imageUrl'];
+      String imageUrl = widget.ingredientData['image'];
       
       // Upload new image if selected
       if (context.read<ImageNotifier>().image != null) {
@@ -63,22 +70,12 @@ class _EditIngredientPageState extends State<EditIngredientPage> {
         );
       }
 
-      // Update in both collections
-      await _firestore
-          .collection('ingredients')
-          .doc(widget.ingredientId)
-          .update({
-        'title': _titleController.text,
-        'imageUrl': imageUrl,
-        'values': _values,
-      });
-
       await _firestore
           .collection('ingredients_management')
           .doc(widget.ingredientId)
           .update({
         'title': _titleController.text,
-        'imageUrl': imageUrl,
+        'image': imageUrl,
         'values': _values,
       });
 
@@ -137,19 +134,83 @@ class _EditIngredientPageState extends State<EditIngredientPage> {
                   SizedBox(
                     width: 130,
                     height: 130,
-                    child: Stack(
-                      children: [
-                        Container(
-                          decoration: BoxDecoration(
-                            image: DecorationImage(
-                              image: NetworkImage(widget.ingredientData['imageUrl']),
-                              fit: BoxFit.cover,
+                    child: GestureDetector(onTap: () async{
+                       await showDialog(
+                        context: context,
+                        builder: (context) {
+                          return Material(
+                            type: MaterialType.transparency,
+                            child: Center(
+                              child: Material(
+                                borderRadius: BorderRadius.circular(8),
+                                child: Container(
+                                  width: 160, // Lebih lebar dari sebelumnya
+                                  height: 80,
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 16, vertical: 12),
+                                  decoration: BoxDecoration(
+                                    color: whiteColor,
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      IconButton(
+                                        padding: EdgeInsets.zero,
+                                        iconSize:
+                                            32, // Ukuran icon yang lebih kecil
+                                        onPressed: () async {
+                                          XFile? result = await imagePickerHelper.pickImage(ImageSource.gallery);
+                                          if (result != null) {
+                                            image = File(result.path);
+                                            imageURL = await storageHelper.uploadImageToStorage(image!, _titleController.text);
+
+                                            setState(() {
+                                              
+                                            });
+                                          }
+                                          Navigator.pop(context);
+                                          
+                                        },
+                                        icon: const Icon(Icons.image),
+                                      ),
+                                      IconButton(
+                                        padding: EdgeInsets.zero,
+                                        iconSize:
+                                            32, 
+                                        onPressed: () async {
+                                          XFile? result = await imagePickerHelper.pickImage(ImageSource.camera);
+                                          if (result != null) {
+                                            image = File(result.path);
+                                            imageURL = await storageHelper.uploadImageToStorage(image!, _titleController.text);
+
+                                            setState(() {
+                                              
+                                            });
+                                          }
+                                          Navigator.pop(context);
+                                        },
+                                        icon: const Icon(Icons.camera_alt),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
                             ),
-                            borderRadius: BorderRadius.circular(8),
+                          );
+                        },
+                      );
+                    },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            image: NetworkImage(widget.ingredientData['image']),
+                            fit: BoxFit.cover,
                           ),
+                          borderRadius: BorderRadius.circular(8),
                         ),
-                        PickImage(),
-                      ],
+                      ),
                     ),
                   ),
                   const SizedBox(height: 20),

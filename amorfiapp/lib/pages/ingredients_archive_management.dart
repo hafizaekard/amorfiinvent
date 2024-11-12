@@ -9,7 +9,8 @@ import 'package:flutter/material.dart';
 class IngredientsArchiveManagementPage extends StatefulWidget {
   final String currentPage;
 
-  const IngredientsArchiveManagementPage({super.key, required this.currentPage});
+  const IngredientsArchiveManagementPage(
+      {super.key, required this.currentPage});
 
   @override
   State<IngredientsArchiveManagementPage> createState() =>
@@ -165,62 +166,71 @@ class _IngredientsArchiveManagementPageState
                           style: blackTextStyle.copyWith(
                               fontSize: 14, fontWeight: semiBold)),
                     ),
-                   ListView.builder(
-  shrinkWrap: true,
-  physics: const NeverScrollableScrollPhysics(),
-  itemCount: items.length,
-  itemBuilder: (context, itemIndex) {
-    final itemMap = items[itemIndex] as Map<String, dynamic>;
-    final value = itemMap['value'] ?? 'No value';
-    final valueString = value is num ? value.toStringAsFixed(2) : value.toString();
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(4),
-            child: itemMap['image'] != null
-                ? Image.network(
-                    itemMap['image'],
-                    width: 50,
-                    height: 50,
-                    fit: BoxFit.cover,
-                  )
-                : Container(
-                    width: 50,
-                    height: 50,
-                    color: greyColor,
-                    child: const Icon(Icons.image_not_supported),
-                  ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  itemMap['title'] ?? 'No title',
-                  style: blackTextStyle.copyWith(fontSize: 14, fontWeight: semiBold),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  'Quantity: ${itemMap['quantity'] ?? 'No quantity'}',
-                  style: blackTextStyle.copyWith(fontSize: 14),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  'Value: $valueString',
-                  style: blackTextStyle.copyWith(fontSize: 14),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  },
-),
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: items.length,
+                      itemBuilder: (context, itemIndex) {
+                        final itemMap =
+                            items[itemIndex] as Map<String, dynamic>;
+                        final value = itemMap['values'] ?? 'No value';
+                        print(value.toString());
+                        final valueString = value is num
+                            ? value.toStringAsFixed(2)
+                            : value.toString();
+                        return Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 8),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(4),
+                                child: itemMap['image'] != null
+                                    ? Image.network(
+                                        itemMap['image'],
+                                        width: 50,
+                                        height: 50,
+                                        fit: BoxFit.cover,
+                                      )
+                                    : Container(
+                                        width: 50,
+                                        height: 50,
+                                        color: greyColor,
+                                        child: const Icon(
+                                            Icons.image_not_supported),
+                                      ),
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      itemMap['title'] ?? 'No title',
+                                      style: blackTextStyle.copyWith(
+                                          fontSize: 14, fontWeight: semiBold),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      'Quantity: ${itemMap['quantity'] ?? 'No quantity'}',
+                                      style:
+                                          blackTextStyle.copyWith(fontSize: 14),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      'Value: $valueString',
+                                      style:
+                                          blackTextStyle.copyWith(fontSize: 14),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
                   ],
                 ),
               );

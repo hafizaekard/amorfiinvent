@@ -1,4 +1,3 @@
-// edit_item_page.dart
 import 'dart:developer';
 import 'dart:io';
 
@@ -75,7 +74,7 @@ class _EditItemPageState extends State<EditItemPage> {
           'title': _titleController.text,
           'title2': _title2Controller.text,
           'label': _selectedLabel,
-          'image': imageURL,
+          'image': imageURL == "" ? widget.itemData["image"] : imageURL,
         });
 
         if (mounted) {

@@ -7,7 +7,9 @@ import 'package:amorfiapp/pages/remaining_stock.dart';
 import 'package:amorfiapp/routes/custom_page_route.dart';
 import 'package:amorfiapp/shared/shared_values.dart';
 import 'package:amorfiapp/widgets/production_app_drawer.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:syncfusion_flutter_charts/charts.dart';
 
 class ProductionPage extends StatefulWidget {
   const ProductionPage({super.key});
@@ -38,7 +40,8 @@ class _ProductionPageState extends State<ProductionPage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => ProductionArchiveManagementPage(currentPage: currentPage),
+        builder: (context) =>
+            ProductionArchiveManagementPage(currentPage: currentPage),
       ),
     );
   }
@@ -46,6 +49,9 @@ class _ProductionPageState extends State<ProductionPage> {
   void _navigateToItemManagementPage() {
     _navigateToPage(const ItemManagementPage());
   }
+
+  final Stream<QuerySnapshot> _usersStream =
+      FirebaseFirestore.instance.collection('input_item').snapshots();
 
   @override
   Widget build(BuildContext context) {
@@ -133,7 +139,8 @@ class _ProductionPageState extends State<ProductionPage> {
                                     _navigateToItemManagementPage();
                                   } else if (index == 4) {
                                     // Pass 'Production Archive' as the current page
-                                    _navigateToProductionArchiveManagementPage('Production Archive');
+                                    _navigateToProductionArchiveManagementPage(
+                                        'Production Archive');
                                   }
                                 },
                                 highlightColor: transparentColor,
@@ -151,14 +158,19 @@ class _ProductionPageState extends State<ProductionPage> {
                                                     : 'archive_management',
                                   ),
                                   builder: (context, snapshot) {
-                                    if (snapshot.connectionState == ConnectionState.waiting) {
-                                      return const Center(child: CircularProgressIndicator());
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.waiting) {
+                                      return const Center(
+                                          child: CircularProgressIndicator());
                                     }
                                     if (snapshot.hasError) {
-                                      return Center(child: Text('Error: ${snapshot.error}'));
+                                      return Center(
+                                          child:
+                                              Text('Error: ${snapshot.error}'));
                                     }
                                     if (!snapshot.hasData) {
-                                      return const Center(child: Text('No image'));
+                                      return const Center(
+                                          child: Text('No image'));
                                     }
                                     return ClipRRect(
                                       borderRadius: BorderRadius.circular(30),
@@ -188,6 +200,51 @@ class _ProductionPageState extends State<ProductionPage> {
                           color: whiteColor,
                           borderRadius: BorderRadius.circular(30),
                         ),
+                        child: StreamBuilder(
+                            stream: _usersStream,
+                            builder: (context, snapshot) {
+                              if (snapshot.hasError) {
+                                return Text('Something went wrong');
+                              }
+
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return Text("Loading");
+                              }
+                              return SizedBox(
+                                height: 600,
+                                child: SfCartesianChart(
+                                  // Initialize category axis
+                                  primaryXAxis: const CategoryAxis(
+                                    arrangeByIndex: true,
+                                    axisLine: AxisLine(width: 0),
+                                    // interval: 1,
+                                    name: 'Year',
+                                  ),
+
+                                  series: [
+                                    LineSeries(
+                                      // Bind data source
+                                      dataSource: snapshot.data!.docs.map((DocumentSnapshot document){
+                                        final data = document.data()!;
+                                        return {
+                                          'quantity' : data['quantity'],
+                                        };
+                                      }
+                                      ).toList(),
+                                      xValueMapper: (sales, _) =>
+                                          sales['quantity'],
+                                      yValueMapper: (sales, _) =>
+                                          sales['title'],
+                                      // Enable data label
+                                      dataLabelSettings:
+                                          const DataLabelSettings(
+                                              isVisible: true),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }),
                       ),
                     ),
                   ),

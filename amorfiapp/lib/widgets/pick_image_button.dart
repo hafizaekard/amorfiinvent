@@ -25,51 +25,58 @@ class _PickImageState extends State<PickImage> {
           context: context,
           builder: (context) {
             return Material(
-  type: MaterialType.transparency,
-  child: Center(
-    child: Material(
-      borderRadius: BorderRadius.circular(8),
-      child: Container(
-        width: 160, // Lebih lebar dari sebelumnya
-        height: 80,
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        decoration: BoxDecoration(
-          color: whiteColor,
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            IconButton(
-              padding: EdgeInsets.zero,
-              iconSize: 32, // Ukuran icon yang lebih kecil
-              onPressed: () async {
-                final result = await imagePicker.pickImage(ImageSource.gallery);
-                if (result != null) {
-                  context.read<ImageNotifier>().setImage(File(result.path));
-                }
-                Navigator.pop(context);
-              },
-              icon: const Icon(Icons.image),
-            ),
-            IconButton(
-              padding: EdgeInsets.zero,
-              iconSize: 32, // Ukuran icon yang lebih kecil
-              onPressed: () async {
-                final result = await imagePicker.pickImage(ImageSource.camera);
-                if (result != null) {
-                  context.read<ImageNotifier>().setImage(File(result.path));
-                }
-                Navigator.pop(context);
-              },
-              icon: const Icon(Icons.camera_alt),
-            ),
-          ],
-        ),
-      ),
-    ),
-  ),
-);
+              type: MaterialType.transparency,
+              child: Center(
+                child: Material(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Container(
+                    width: 160, // Lebih lebar dari sebelumnya
+                    height: 80,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 12),
+                    decoration: BoxDecoration(
+                      color: whiteColor,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        IconButton(
+                          padding: EdgeInsets.zero,
+                          iconSize: 32, // Ukuran icon yang lebih kecil
+                          onPressed: () async {
+                            final result = await imagePicker
+                                .pickImage(ImageSource.gallery);
+                            if (result != null) {
+                              context
+                                  .read<ImageNotifier>()
+                                  .setImage(File(result.path));
+                            }
+                            Navigator.pop(context);
+                          },
+                          icon: const Icon(Icons.image),
+                        ),
+                        IconButton(
+                          padding: EdgeInsets.zero,
+                          iconSize: 32, // Ukuran icon yang lebih kecil
+                          onPressed: () async {
+                            final result =
+                                await imagePicker.pickImage(ImageSource.camera);
+                            if (result != null) {
+                              context
+                                  .read<ImageNotifier>()
+                                  .setImage(File(result.path));
+                            }
+                            Navigator.pop(context);
+                          },
+                          icon: const Icon(Icons.camera_alt),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            );
           },
         );
       },

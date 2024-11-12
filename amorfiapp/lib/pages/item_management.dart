@@ -234,8 +234,8 @@ class _ItemManagementPageState extends State<ItemManagementPage> {
                           ),
                           const SizedBox(width: 16),
                           Expanded(
-                            child: data['label']?.isEmpty == true &&
-                                    data['title2']?.isEmpty == true
+                            child: data['label'] == '-' &&
+                                    data['title2']?.isEmpty
                                 ? Align(
                                     alignment: Alignment.centerLeft,
                                     child: Text(
@@ -262,7 +262,7 @@ class _ItemManagementPageState extends State<ItemManagementPage> {
                                         children: [
                                           if (data['label']?.isNotEmpty == true)
                                             Text(
-                                              data['label'],
+                                              data['label'] == '-' ? '' : data['label'],
                                               style: blueTextStyle.copyWith(
                                                 fontSize: 15,
                                                 fontWeight: normal,

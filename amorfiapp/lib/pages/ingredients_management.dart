@@ -1,4 +1,5 @@
 import 'package:amorfiapp/pages/add_ingredient_page.dart';
+import 'package:amorfiapp/pages/edit_ingredient_page.dart';
 import 'package:amorfiapp/routes/custom_page_route.dart';
 import 'package:amorfiapp/shared/shared_values.dart';
 import 'package:amorfiapp/widgets/back_button_custom.dart';
@@ -11,14 +12,13 @@ class IngredientsManagementPage extends StatefulWidget {
   const IngredientsManagementPage({super.key});
 
   @override
-  State<IngredientsManagementPage> createState() =>
-      _IngredientsManagementPageState();
+  State<IngredientsManagementPage> createState() => _IngredientsManagementPageState();
 }
 
 class _IngredientsManagementPageState extends State<IngredientsManagementPage> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   bool isSelectMode = false;
-  String? selectedItemId;
+  String? selectedIngredientId;
 
   Stream<QuerySnapshot> get items {
     return _firestore
@@ -35,15 +35,18 @@ class _IngredientsManagementPageState extends State<IngredientsManagementPage> {
     _navigateToPage(const AddIngredientPage());
   }
 
-  Future<void> _deleteItem(String itemId) async {
+  Future<void> _deleteItem(String ingredientId) async {
     try {
-      await _firestore.collection('ingredients_management').doc(itemId).delete();
-      print("Deleted from ingredients_management: $itemId"); // Debug print
+      // Hapus item dari "input_item"
+      await _firestore.collection('ingredients_management').doc(ingredientId).delete();
+      print("Deleted from ingredients_management: $ingredientId"); // Debug print
 
+      // Tampilkan pesan sukses
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Item successfully deleted')),
       );
     } catch (e) {
+      // Tampilkan pesan kesalahan
       print("Error deleting item: $e");
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Failed to delete item: $e")),
@@ -51,67 +54,78 @@ class _IngredientsManagementPageState extends State<IngredientsManagementPage> {
     }
   }
 
-  void _showEditDeleteDialog(String itemId) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Edit or Delete'),
-          content: const Text('Choose an action for this item.'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-                // Tambahkan navigasi ke halaman edit jika diperlukan
-              },
-              child: const Text('Edit'),
-            ),
-            TextButton(
-              onPressed: () {
-                _deleteItem(itemId);
-                Navigator.pop(context);
-              },
-              child: const Text('Delete'),
-            ),
-            TextButton(
-              onPressed: () {
-                setState(() {
-                  isSelectMode = false;
-                  selectedItemId = null;
-                });
-                Navigator.pop(context);
-              },
-              child: const Text('Cancel'),
-            ),
-          ],
-        );
-      },
-    ).then((_) {
-      if (isSelectMode) {
-        setState(() {
-          isSelectMode = false;
-          selectedItemId = null;
-        });
-      }
-    });
-  }
-
-  void _handleCircleAvatarTap(String itemId) {
-    setState(() {
-      selectedItemId = selectedItemId == itemId ? null : itemId;
-    });
-
-    if (selectedItemId == itemId) {
-      _showEditDeleteDialog(itemId);
+  void _showEditDeleteDialog(String ingredientId) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text('Edit or Delete'),
+        content: const Text('Choose an action for this item.'),
+        actions: [
+          TextButton(
+            onPressed: () async {
+              Navigator.pop(context); // Close the dialog
+              
+              // Get the item data from Firestore
+              DocumentSnapshot doc = await _firestore
+                  .collection('ingredients_management')
+                  .doc(ingredientId)
+                  .get();
+              
+              if (mounted && doc.exists) {
+                Map<String, dynamic> ingredientData = doc.data() as Map<String, dynamic>;
+                _navigateToPage(EditIngredientPage(
+                  ingredientId: ingredientId,
+                  ingredientData: ingredientData,
+                ));
+              }
+            },
+            child: const Text('Edit'),
+          ),
+          TextButton(
+            onPressed: () {
+              _deleteItem(ingredientId);
+              Navigator.pop(context);
+            },
+            child: const Text('Delete'),
+          ),
+          TextButton(
+            onPressed: () {
+              setState(() {
+                isSelectMode = false;
+                selectedIngredientId = null;
+              });
+              Navigator.pop(context);
+            },
+            child: const Text('Cancel'),
+          ),
+        ],
+      );
+    },
+  ).then((_) {
+    if (isSelectMode) {
+      setState(() {
+        isSelectMode = false;
+        selectedIngredientId = null;
+      });
     }
+  });
+}
+
+  void _handleCircleAvatarTap(String ingredientId) {
+    setState(() {
+      selectedIngredientId = selectedIngredientId == ingredientId ? null : ingredientId;
+    });
+    _showEditDeleteDialog(ingredientId);
   }
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
+        // Reset the selected item when tapping outside the CircleAvatar
         setState(() {
-          selectedItemId = null;
+          selectedIngredientId = null;
           isSelectMode = false;
         });
       },
@@ -134,7 +148,7 @@ class _IngredientsManagementPageState extends State<IngredientsManagementPage> {
               onPressed: () {
                 setState(() {
                   isSelectMode = !isSelectMode;
-                  selectedItemId = null;
+                  selectedIngredientId = null;
                 });
               },
               width: 70,
@@ -187,7 +201,7 @@ class _IngredientsManagementPageState extends State<IngredientsManagementPage> {
                 constraints: const BoxConstraints(maxWidth: 700),
                 child: ListView(
                   children: sortedDocs.map((DocumentSnapshot document) {
-                    String itemId = document.id; // Pastikan itemId diambil di sini
+                    String ingredientId = document.id;
                     Map<String, dynamic> data =
                         document.data()! as Map<String, dynamic>;
                     List<dynamic> values = data['values'] ?? [];
@@ -252,14 +266,14 @@ class _IngredientsManagementPageState extends State<IngredientsManagementPage> {
                           if (isSelectMode)
                             GestureDetector(
                               onTap: () {
-                                _handleCircleAvatarTap(itemId);
+                                _handleCircleAvatarTap(ingredientId);
                               },
                               child: CircleAvatar(
-                                backgroundColor: selectedItemId == itemId
+                                backgroundColor: selectedIngredientId == ingredientId
                                     ? blueColor
                                     : beigeColor,
                                 radius: 10,
-                                child: selectedItemId == itemId
+                                child: selectedIngredientId == ingredientId
                                     ? const Icon(Icons.check,
                                         color: Colors.white, size: 15)
                                     : null,

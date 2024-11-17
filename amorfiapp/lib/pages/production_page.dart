@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:amorfiapp/helper/firestore_helper.dart';
 import 'package:amorfiapp/pages/input_item.dart';
 import 'package:amorfiapp/pages/item_management.dart';
@@ -219,27 +221,41 @@ class _ProductionPageState extends State<ProductionPage> {
                                     arrangeByIndex: true,
                                     axisLine: AxisLine(width: 0),
                                     // interval: 1,
-                                    name: 'Year',
+                                    name: 'Quantity',
                                   ),
 
                                   series: [
                                     LineSeries(
                                       // Bind data source
-                                      dataSource: snapshot.data!.docs.map((DocumentSnapshot document){
-                                        final data = document.data()!;
+                                      dataSource: snapshot.data!.docs
+                                          .map((DocumentSnapshot document) {
+                                        final data = document.data()!
+                                            as Map<String, dynamic>;
+                                        log(data['quantity']
+                                            .runtimeType
+                                            .toString());
                                         return {
-                                          'quantity' : data['quantity'],
+                                          'quantity': data['quantity'],
+                                          'title': data['title'],
                                         };
-                                      }
-                                      ).toList(),
+                                      }).toList(),
                                       xValueMapper: (sales, _) =>
-                                          sales['quantity'],
-                                      yValueMapper: (sales, _) =>
                                           sales['title'],
+                                      yValueMapper: (sales, _) =>
+                                          sales['quantity'],
                                       // Enable data label
-                                      dataLabelSettings:
-                                          const DataLabelSettings(
-                                              isVisible: true),
+                                      markerSettings: MarkerSettings(
+                                        isVisible:
+                                            true, // Menampilkan marker di setiap titik
+                                        shape: DataMarkerType
+                                            .circle, // Bentuk marker (lingkaran)
+                                        borderColor:
+                                            orangeColor, // Warna border marker
+                                        borderWidth:
+                                            2, // Ketebalan border marker
+                                        color: orangeColor, // Warna isi marker
+                                      ),
+                                      color: blueColor,
                                     ),
                                   ],
                                 ),

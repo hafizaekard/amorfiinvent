@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:amorfiapp/routes/custom_page_route.dart';
 import 'package:amorfiapp/shared/shared_values.dart';
 import 'package:amorfiapp/widgets/back_button_custom.dart';
@@ -21,17 +23,37 @@ class _InputItemPageState extends State<InputItemPage> {
   final Map<String, int> itemQuantities = {};
 
   Stream<QuerySnapshot> get items {
-    return _firestore
-        .collection('item_management')
-        .orderBy('title', descending: false)
-        .snapshots();
-  }
+  return _firestore
+      .collection('input_item')
+      .orderBy('title', descending: false)
+      .snapshots();
+}
 
   @override
-  void initState() {
-    super.initState();
-    _loadQuantities();
-  }
+void initState() {
+  super.initState();
+  _loadQuantities();
+  _listenToQuantityChanges();
+}
+
+void _listenToQuantityChanges() {
+  _firestore
+      .collection('input_item')
+      .snapshots()
+      .listen((snapshot) {
+    for (var doc in snapshot.docs) {
+      final data = doc.data();
+      if (data.containsKey('quantity')) {
+        setState(() {
+          itemQuantities[doc.id] = data['quantity'] as int;
+          if (_controllers.containsKey(doc.id)) {
+            _controllers[doc.id]!.text = data['quantity'].toString();
+          }
+        });
+      }
+    }
+  });
+}
 
   @override
   void dispose() {
@@ -42,7 +64,7 @@ class _InputItemPageState extends State<InputItemPage> {
 
   Future<void> _loadQuantities() async {
     var quantitiesDoc =
-        await _firestore.collection('input_quantities').doc('current').get();
+        await _firestore.collection('input_item').doc('quantity').get();
     if (quantitiesDoc.exists) {
       setState(() {
         Map<String, dynamic> data =
@@ -63,24 +85,44 @@ class _InputItemPageState extends State<InputItemPage> {
   }
 
   Future<void> _saveQuantities() async {
-    await _firestore.collection('input_quantities').doc('current').set(
+    await _firestore.collection('input_item').doc('quantity').set(
           itemQuantities.map((key, value) => MapEntry(key, value)),
           SetOptions(merge: true),
         );
   }
 
+  Future<void> _updateQuantityInFirestore(
+      String documentId, int newQuantity) async {
+    try {
+      await _firestore
+          .collection('input_item')
+          .doc(documentId)
+          .update({'quantity': newQuantity});
+    } catch (e) {
+      print('Error updating quantity: $e');
+    }
+  }
+
   void _increaseQuantity(String documentId) {
-    itemQuantities[documentId] = (itemQuantities[documentId] ?? 0) + 1;
-    _getController(documentId).text = itemQuantities[documentId].toString();
+    setState(() {
+      itemQuantities[documentId] = (itemQuantities[documentId] ?? 0) + 1;
+      _getController(documentId).text = itemQuantities[documentId].toString();
+    });
     _saveQuantities();
+    // Tambahkan update ke Firestore
+    _updateQuantityInFirestore(documentId, itemQuantities[documentId]!);
   }
 
   void _decreaseQuantity(String documentId) {
     if ((itemQuantities[documentId] ?? 0) > 0) {
-      itemQuantities[documentId] = (itemQuantities[documentId] ?? 0) - 1;
-      _getController(documentId).text = itemQuantities[documentId].toString();
+      setState(() {
+        itemQuantities[documentId] = (itemQuantities[documentId] ?? 0) - 1;
+        _getController(documentId).text = itemQuantities[documentId].toString();
+      });
+      _saveQuantities();
+      // Tambahkan update ke Firestore
+      _updateQuantityInFirestore(documentId, itemQuantities[documentId]!);
     }
-    _saveQuantities();
   }
 
   Future<void> refreshData() async {
@@ -88,10 +130,10 @@ class _InputItemPageState extends State<InputItemPage> {
       final timestamp = DateTime.now();
       final archiveRef = _firestore.collection('archive_management').doc();
 
-      final items = await _firestore.collection('item_management').get();
+      final items = await _firestore.collection('input_item').get();
       final archiveData = <String, dynamic>{
         'timestamp': timestamp,
-        'source': 'input_quantities',
+        'source': 'input_item',
         'items': [],
       };
 
@@ -111,6 +153,16 @@ class _InputItemPageState extends State<InputItemPage> {
       }
 
       await archiveRef.set(archiveData);
+
+      // Reset semua kuantitas di Firestore
+      WriteBatch batch = _firestore.batch();
+      for (var doc in items.docs) {
+        final docRef = _firestore.collection('input_item').doc(doc.id);
+        batch.update(docRef, {'quantity': 0}); // Atur quantity menjadi 0
+      }
+      await batch.commit();
+
+      // Reset kuantitas lokal di aplikasi
       setState(() {
         itemQuantities.clear();
         _controllers.forEach((key, controller) {
@@ -118,7 +170,7 @@ class _InputItemPageState extends State<InputItemPage> {
         });
       });
 
-      await _firestore.collection('input_quantities').doc('current').delete();
+      await _firestore.collection('input_item').doc('quantity').delete();
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -143,10 +195,16 @@ class _InputItemPageState extends State<InputItemPage> {
   void _updateQuantityFromInput(String documentId, String value) {
     int? newQuantity = int.tryParse(value);
     if (newQuantity != null && newQuantity >= 0) {
-      itemQuantities[documentId] = newQuantity;
+      setState(() {
+        itemQuantities[documentId] = newQuantity;
+      });
       _saveQuantities();
+      // Tambahkan update ke Firestore
+      _updateQuantityInFirestore(documentId, newQuantity);
     }
   }
+
+  FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -327,7 +385,11 @@ class _InputItemPageState extends State<InputItemPage> {
                                 keyboardType: TextInputType.number,
                                 onChanged: (value) {
                                   if (value.isEmpty) return;
-                                  if (int.tryParse(value) == null) return;
+                                  int? newValue = int.tryParse(value);
+                                  if (newValue != null) {
+                                    _updateQuantityFromInput(
+                                        document.id, value);
+                                  }
                                 },
                                 style: blackTextStyle.copyWith(
                                     fontSize: 16, fontWeight: bold),
@@ -336,7 +398,16 @@ class _InputItemPageState extends State<InputItemPage> {
                             IconButton(
                               padding: EdgeInsets.zero,
                               constraints: const BoxConstraints(),
-                              onPressed: () => _increaseQuantity(document.id),
+                              onPressed: () async {
+                                _increaseQuantity(document.id);
+                                log(document.id.toString(),
+                                    name: 'Document ID');
+                                await firebaseFirestore
+                                    .collection('input_item')
+                                    .doc(document.id)
+                                    .update(
+                                        {'quantity': FieldValue.increment(1)});
+                              },
                               icon: Container(
                                 padding: const EdgeInsets.all(8),
                                 decoration: BoxDecoration(

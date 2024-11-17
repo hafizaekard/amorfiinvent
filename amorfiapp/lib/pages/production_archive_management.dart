@@ -1,4 +1,4 @@
-import 'dart:async'; // Import Timer class
+import 'dart:async';
 
 import 'package:amorfiapp/helper/firestore_helper.dart';
 import 'package:amorfiapp/shared/shared_values.dart';
@@ -26,11 +26,11 @@ class _ProductionArchiveManagementPageState
   void initState() {
     super.initState();
     // Run cleanup when the page is opened
-    FirestoreHelper.deleteOldArchives();
+    FirestoreHelper.deleteOldArchives(collectionName: 'archive_management');
     
     // Set up periodic cleanup 
     _cleanupTimer = Timer.periodic(const Duration(hours: 1), (timer) {
-      FirestoreHelper.deleteOldArchives();
+      FirestoreHelper.deleteOldArchives(collectionName: 'archive_management');
     });
   }
 
@@ -48,18 +48,18 @@ class _ProductionArchiveManagementPageState
   }
 
   Color _getContainerColor(String source) {
-    if (source == 'input_quantities') {
+    if (source == 'input_item') {
       return lightBlueColor; // Light blue for Input Item
-    } else if (source == 'remaining_quantities') {
+    } else if (source == 'remaining_stock') {
       return lightYellowColor; // Light yellow for Remaining Stock
     }
     return whiteColor;
   }
 
   Color _getStatusColor(String source) {
-    if (source == 'input_quantities') {
+    if (source == 'input_item') {
       return blueColor;
-    } else if (source == 'remaining_quantities') {
+    } else if (source == 'remaining_stock') {
       return orangeColor;
     }
     return greyColor;
@@ -88,15 +88,15 @@ class _ProductionArchiveManagementPageState
             BackButtonCustom(
               onPressed: () => Navigator.pop(context),
             ),
-            const SizedBox(width: 8),
-            Text(
-              'Archive Management',
-              style: TextStyle(
-                color: blueColor,
-                fontSize: 25,
-                fontWeight: FontWeight.w600,
+            Expanded(
+                child: Text(
+                  'Archive Management',
+                  style: blueTextStyle.copyWith(
+                    fontSize: 25,
+                    fontWeight: semiBold,
+                  ),
+                ),
               ),
-            ),
           ],
         ),
       ),
@@ -157,7 +157,7 @@ class _ProductionArchiveManagementPageState
                             ),
                           ),
                           Text(
-                            source == 'input_quantities'
+                            source == 'input_item'
                                 ? 'Input Item'
                                 : 'Remaining Stock',
                             style: blackTextStyle.copyWith(

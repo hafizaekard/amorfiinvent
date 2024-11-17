@@ -68,7 +68,7 @@ class _EditItemPageState extends State<EditItemPage> {
     if (_formKey.currentState!.validate()) {
       try {
         await _firestore
-            .collection('item_management')
+            .collection('input_item')
             .doc(widget.itemId)
             .update({
           'title': _titleController.text,
@@ -159,30 +159,16 @@ class _EditItemPageState extends State<EditItemPage> {
                                             });
                                           }
                                           Navigator.pop(context);
-                                          // final result = await imagePicker
-                                          //     .pickImage(ImageSource.gallery);
-                                          // if (result != null) {
-                                          //   context
-                                          //       .read<ImageNotifier>()
-                                          //       .setImage(File(result.path));
-                                          // }
-                                          // Navigator.pop(context);
+                                          
                                         },
                                         icon: const Icon(Icons.image),
                                       ),
                                       IconButton(
                                         padding: EdgeInsets.zero,
                                         iconSize:
-                                            32, // Ukuran icon yang lebih kecil
+                                            32, 
                                         onPressed: () async {
-                                          // final result =
-                                          //     await imagePicker.pickImage(ImageSource.camera);
-                                          // if (result != null) {
-                                          //   context
-                                          //       .read<ImageNotifier>()
-                                          //       .setImage(File(result.path));
-                                          // }
-                                          // Navigator.pop(context);
+                                         
                                         },
                                         icon: const Icon(Icons.camera_alt),
                                       ),
@@ -242,18 +228,7 @@ class _EditItemPageState extends State<EditItemPage> {
                   ),
                   const SizedBox(height: 16),
 
-                  // // Label field
-                  // TextFormField(
-                  //   controller: _labelController,
-                  //   decoration: InputDecoration(
-                  //     labelText: 'Label (Optional)',
-                  //     border: OutlineInputBorder(
-                  //       borderRadius: BorderRadius.circular(8),
-                  //     ),
-                  //     filled: true,
-                  //     fillColor: whiteColor,
-                  //   ),
-                  // ),
+                  
                   Container(
                     decoration: BoxDecoration(
                       border: Border.all(color: Colors.grey),

@@ -71,7 +71,7 @@ class _EditIngredientPageState extends State<EditIngredientPage> {
       }
 
       await _firestore
-          .collection('ingredients_management')
+          .collection('input_ingredient')
           .doc(widget.ingredientId)
           .update({
         'title': _titleController.text,

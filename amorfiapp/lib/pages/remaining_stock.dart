@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:amorfiapp/routes/custom_page_route.dart';
 import 'package:amorfiapp/shared/shared_values.dart';
 import 'package:amorfiapp/widgets/back_button_custom.dart';
@@ -20,7 +22,7 @@ class _RemainingStockPageState extends State<RemainingStockPage> {
 
   Stream<QuerySnapshot> get items {
     return _firestore
-        .collection('item_management')
+        .collection('input_item')
         .orderBy('title', descending: false)
         .snapshots();
   }
@@ -33,8 +35,8 @@ class _RemainingStockPageState extends State<RemainingStockPage> {
 
   Future<void> _loadQuantities() async {
     var quantitiesDoc = await _firestore
-        .collection('remaining_quantities')
-        .doc('current')
+        .collection('remaining_stock')
+        .doc('quantity')
         .get();
     if (quantitiesDoc.exists) {
       setState(() {
@@ -58,17 +60,13 @@ class _RemainingStockPageState extends State<RemainingStockPage> {
   final Map<String, int> itemQuantities = {};
 
   Future<void> _saveQuantities() async {
-    await _firestore.collection('remaining_quantities').doc('current').set(
+    await _firestore.collection('remaining_stock').doc('quantity').set(
           itemQuantities.map((key, value) => MapEntry(key, value)),
           SetOptions(merge: true),
         );
   }
 
-/*************  ✨ Codeium Command ⭐  *************/
-  /// Increases the quantity of an item by 1 for the given document ID, updates
-  /// the corresponding text controller, and saves the updated quantities to
-  /// Firestore.
-  /// ****  d853fac7-a594-447f-b96e-79d26ba7ea47  ******
+
   void _increaseQuantity(String documentId) {
     itemQuantities[documentId] = (itemQuantities[documentId] ?? 0) + 1;
     _getController(documentId).text = itemQuantities[documentId].toString();
@@ -87,68 +85,77 @@ class _RemainingStockPageState extends State<RemainingStockPage> {
   try {
     final timestamp = DateTime.now();
     final archiveRef = _firestore.collection('archive_management').doc();
-
-    final items = await _firestore.collection('item_management').get();
-    final archiveData = <String, dynamic>{
-      'timestamp': timestamp,
-      'source': 'remaining_quantities',
-      'items': [],
-    };
-
-    // Create a map of current quantities before clearing
-    final Map<String, int> currentQuantities = Map.from(itemQuantities);
-
-    // Prepare archive data - only items with quantities > 0
+    
+    // 1. Ambil semua data item
+    final items = await _firestore.collection('input_item').get();
+    
+    // 2. Siapkan data untuk archive dan input_item
+    final archiveData = {
+  'timestamp': timestamp,
+  'source': 'remaining_stock',
+  'items': <Map<String, dynamic>>[], // Definisikan sebagai List of Maps
+};
+    
+    final batch = _firestore.batch();
+    
+    // 3. Loop melalui semua item
     for (var doc in items.docs) {
-      final itemData = doc.data();
-      final quantity = itemQuantities[doc.id] ?? 0;
-      if (quantity > 0) {
-        archiveData['items'].add({
-          'itemId': doc.id,
-          'title': itemData['title'],
-          'quantity': quantity,
-          'image': itemData['image'],
-          'label': itemData['label'],
-          'title2': itemData['title2'],
-        });
-      }
-    }
+  final itemData = doc.data();
+  final quantity = itemQuantities[doc.id] ?? 0;
+  
+  if (quantity > 0) {
+    // Gunakan List.add() untuk menambahkan Map baru
+    (archiveData['items'] as List<Map<String, dynamic>>).add({
+      'itemId': doc.id,
+      'title': itemData['title'],
+      'quantity': quantity,
+      'image': itemData['image'],
+      'label': itemData['label'],
+      'title2': itemData['title2'],
+    });
 
-    // 1. Save to archive management
+    // Update quantity di dokumen item
+    final itemRef = _firestore.collection('input_item').doc(doc.id);
+    batch.update(itemRef, {'quantity': quantity});
+  }
+}
+
+    // 4. Simpan ke archive
     await archiveRef.set(archiveData);
 
-    // 2. Transfer quantities to input_quantities
-    await _firestore.collection('input_quantities').doc('current').set(
-      currentQuantities.map((key, value) => MapEntry(key, value)),
-      SetOptions(merge: true),
-    );
+    // 5. Commit batch update untuk quantity items
+    await batch.commit();
 
-    // 3. Only clear quantities, not items
+    // 6. Update quantity di collection input_item/quantity
+    final Map<String, dynamic> quantityUpdates = {};
+    itemQuantities.forEach((key, value) {
+      if (value > 0) quantityUpdates[key] = value;
+    });
+    
+    await _firestore.collection('input_item')
+        .doc('quantity')
+        .set(quantityUpdates, SetOptions(merge: true));
+
+    // 7. Reset remaining stock
     setState(() {
-      // Clear only quantities from the map
       itemQuantities.clear();
-      
-      // Reset quantity text fields to '0'
       _controllers.forEach((key, controller) {
         controller.text = '0';
       });
     });
     
-    // Update Firestore to remove only quantities
-    await _firestore.collection('remaining_quantities').doc('current').set({});
+    await _firestore.collection('remaining_stock')
+        .doc('quantity')
+        .set({});
 
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text('Quantities have been archived, transferred, and cleared'),
-        duration: Duration(seconds: 2),
+        content: Text('Data has been successfully archived, transferred and updated'),
       ),
     );
   } catch (e) {
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Failed to process data'),
-        duration: Duration(seconds: 2),
-      ),
+      const SnackBar(content: Text('Failed to process data')),
     );
   }
 }
@@ -361,7 +368,16 @@ class _RemainingStockPageState extends State<RemainingStockPage> {
                             IconButton(
                               padding: EdgeInsets.zero,
                               constraints: const BoxConstraints(),
-                              onPressed: () => _increaseQuantity(document.id),
+                              onPressed: () async {
+                                _increaseQuantity(document.id);
+                                log(document.id.toString(),
+                                    name: 'Document ID');
+                                await _firestore
+                                    .collection('remaining_stock')
+                                    .doc(document.id)
+                                    .update(
+                                        {'quantity': FieldValue.increment(1)});
+                              },
                               icon: Container(
                                 padding: const EdgeInsets.all(8),
                                 decoration: BoxDecoration(

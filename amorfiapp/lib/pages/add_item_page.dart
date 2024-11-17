@@ -21,7 +21,7 @@ class _AddItemPageState extends State<AddItemPage> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _title2Controller = TextEditingController();
   String? _selectedLabel;
-  bool _isLoading = false; // Variabel untuk loading
+  bool _isLoading = false;
   final List<String> _labelOptions = ['Ukuran', 'Topping', 'Motif', 'Rasa'];
 
   @override
@@ -143,65 +143,58 @@ class _AddItemPageState extends State<AddItemPage> {
                         SaveButtonCustom(
                           isLoading: _isLoading,
                           label: 'Save',
-                          onPressed: _isLoading ? null : () async {
-                            setState(() {
-                              _isLoading = true; // Setel ke loading
-                            });
+                          onPressed: _isLoading
+                              ? null
+                              : () async {
+                                  setState(() {
+                                    _isLoading = true;
+                                  });
 
-                            try {
-                              final imageUrl = await _storageHelper.uploadImageToStorage(
-                                context.read<ImageNotifier>().image!,
-                                _titleController.text,
-                              );
+                                  try {
+                                    // Mengunggah gambar ke Storage
+                                    final imageUrl = await _storageHelper.uploadImageToStorage(
+                                      context.read<ImageNotifier>().image!,
+                                      _titleController.text,
+                                    );
 
-                              await _firestoreHelper.inputItem(
-                                _titleController.text,
-                                imageUrl,
-                                title2: _title2Controller.text.isNotEmpty ? _title2Controller.text : null,
-                                label: _selectedLabel,
-                              );
+                                    // Menyimpan data item baru
+                                    await _firestoreHelper.addItem(
+                                      _titleController.text,
+                                      imageUrl,
+                                      title2: _title2Controller.text.isNotEmpty ? _title2Controller.text : null,
+                                      label: _selectedLabel,
+                                    );
 
-                              await _firestoreHelper.addToRemainingStock(
-                                _titleController.text,
-                                imageUrl,
-                                title2: _title2Controller.text.isNotEmpty ? _title2Controller.text : null,
-                                label: _selectedLabel,
-                              );
+                                    // Mengosongkan input dan reset state
+                                    context.read<ImageNotifier>().resetImage();
+                                    _titleController.clear();
+                                    _title2Controller.clear();
+                                    setState(() {
+                                      _selectedLabel = null;
+                                    });
 
-                              await _firestoreHelper.addToItemManagement(
-                                _titleController.text,
-                                imageUrl,
-                                title2: _title2Controller.text.isNotEmpty ? _title2Controller.text : null,
-                                label: _selectedLabel,
-                              );
-
-                              context.read<ImageNotifier>().resetImage();
-                              _titleController.clear();
-                              _title2Controller.clear();
-                              setState(() {
-                                _selectedLabel = null;
-                              });
-
-                              if (mounted) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text('Item successfully added'),
-                                  ),
-                                );
-                              }
-                            } catch (e) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text('Failed to add item: $e'),
-                                ),
-                              );
-                            } finally {
-                              setState(() {
-                                _isLoading = false; // Setel loading ke false setelah selesai
-                              });
-                            }
-                          },
-                        ),
+                                    // Menampilkan SnackBar
+                                    if (mounted) {
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(
+                                          content: Text('Item successfully added'),
+                                        ),
+                                      );
+                                    }
+                                  } catch (e) {
+                                    // Menampilkan SnackBar jika terjadi kesalahan
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text('Failed to add item: $e'),
+                                      ),
+                                    );
+                                  } finally {
+                                    setState(() {
+                                      _isLoading = false;
+                                    });
+                                  }
+                                },
+                        )
                       ],
                     ),
                   ),

@@ -17,17 +17,19 @@ class IngredientsArchiveManagementPage extends StatefulWidget {
       _IngredientsArchiveManagementPageState();
 }
 
-class _IngredientsArchiveManagementPageState
-    extends State<IngredientsArchiveManagementPage> {
+class _IngredientsArchiveManagementPageState extends State<IngredientsArchiveManagementPage> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   Timer? _cleanupTimer;
 
   @override
   void initState() {
     super.initState();
-    FirestoreHelper.deleteOldArchives();
+    // Delete old archives when page is initialized
+    FirestoreHelper.deleteOldArchivesIngredients(collectionName: 'archive_ingredients');
+    
+    // Set up periodic cleanup
     _cleanupTimer = Timer.periodic(const Duration(hours: 1), (timer) {
-      FirestoreHelper.deleteOldArchives();
+      FirestoreHelper.deleteOldArchivesIngredients(collectionName: 'archive_ingredients');
     });
   }
 
@@ -84,11 +86,10 @@ class _IngredientsArchiveManagementPageState
             const SizedBox(width: 8),
             Text(
               'Archive Management',
-              style: TextStyle(
-                color: blueColor,
-                fontSize: 25,
-                fontWeight: FontWeight.w600,
-              ),
+              style: blueTextStyle.copyWith(
+                  fontSize: 25,
+                  fontWeight: semiBold,
+                ),
             ),
           ],
         ),
@@ -151,7 +152,7 @@ class _IngredientsArchiveManagementPageState
                           ),
                           Text(
                             'Input Ingredient',
-                            style: blackTextStyle.copyWith(
+                            style: blueTextStyle.copyWith(
                               color: _getStatusColor(source),
                               fontSize: 16,
                               fontWeight: semiBold,

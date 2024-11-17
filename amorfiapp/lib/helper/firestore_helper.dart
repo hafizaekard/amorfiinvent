@@ -3,157 +3,161 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class FirestoreHelper {
   FirebaseFirestore firestore = FirebaseFirestore.instance;
 
-  // Fungsi untuk memperbarui quantity berdasarkan koleksi tertentu
-  static Future<void> updateItemQuantity(String collection, String documentId, int quantity) async {
+  // Memperbarui kuantitas berdasarkan koleksi tertentu
+  Future<void> updateProductQuantity(String productId, int quantity) async {
     try {
       await FirebaseFirestore.instance
-          .collection(collection)
-          .doc(documentId)
+          .collection('products')
+          .doc(productId)
           .update({'quantity': quantity});
-      print('Quantity updated successfully in $collection');
+      print('Quantity updated successfully for product $productId');
     } catch (error) {
-      print('Failed to update quantity in $collection: $error');
+      print('Failed to update quantity for product $productId: $error');
       rethrow;
     }
   }
 
-  // Add this method to your FirestoreHelper class
-Future<void> updateItemInCollections(
-  String itemId,
-  String title,
-  String imageUrl, {
-  String? title2,
-  String? label,
-}) async {
-  final Map<String, dynamic> data = {
-    'title': title,
-    'image': imageUrl,
-    'title2': title2 ?? '',
-    'label': label ?? '',
-  };
-
-  // Update in all three collections
-  await FirebaseFirestore.instance
-      .collection('item_management')
-      .doc(itemId)
-      .update(data);
-
-  await FirebaseFirestore.instance
-      .collection('input_item')
-      .doc(itemId)
-      .update(data);
-
-  await FirebaseFirestore.instance
-      .collection('remaining_stock')
-      .doc(itemId)
-      .update(data);
-}
-
-  Future<void> inputItem(String title, String imageURL, {String? title2, String? label}) async {
-    CollectionReference collection = firestore.collection('input_item');
-    await collection.add({
-      'title': title,
-      'image': imageURL,
-      'title2': title2 ?? '',
-      'label': label ?? '',
-    });
-  }
-
-  Future<void> deleteOrderData(String itemId) async {
+  // Memperbarui data produk
+  Future<void> updateProductData(String productId, String title, String imageUrl, {String? title2, String? label}) async {
     try {
-      // Menghapus dokumen berdasarkan ID di koleksi order_data
-      await firestore.collection('order_data').doc(itemId).delete();
-      print('Order data with ID $itemId deleted successfully');
+      final data = {
+        'title': title,
+        'image': imageUrl,
+        'title2': title2 ?? '',
+        'label': label ?? '',
+      };
+      await FirebaseFirestore.instance
+          .collection('products')
+          .doc(productId)
+          .update(data);
+      await FirebaseFirestore.instance
+          .collection('remaining_stock')
+          .doc(productId)
+          .update(data);
+      print('Product data updated successfully for product $productId');
     } catch (error) {
-      print('Failed to delete order data with ID $itemId: $error');
+      print('Failed to update product data for $productId: $error');
       rethrow;
     }
   }
 
-  // Menambahkan item ke koleksi remaining_stock
-  Future<void> addToRemainingStock(String title, String imageURL, {String? title2, String? label}) async {
-    CollectionReference collection = firestore.collection('remaining_quantities');
-    await collection.add({
-      'title': title,
-      'image': imageURL,
-      'title2': title2 ?? '',
-      'label': label ?? '',
-    });
+  // Menyimpan data produk baru
+  Future<void> addItem(String title, String imageURL, {String? title2, String? label}) async {
+    try {
+      final productData = {
+        'title': title,
+        'image': imageURL,
+        'title2': title2 ?? '',
+        'label': label ?? '',
+        'quantity': 0,
+      };
+      await firestore.collection('products').add(productData);
+      await firestore.collection('remaining_stock').add(productData);
+      await firestore.collection('input_item').add(productData);
+      print('New product added successfully');
+    } catch (error) {
+      print('Failed to add new product: $error');
+      rethrow;
+    }
   }
 
-  // Fungsi untuk menambah data pada koleksi input_quantities
-  Future<void> addToInputItem(String title, String imageURL, {String? title2, String? label}) async {
-    CollectionReference collection = firestore.collection('input_quantities');
-    await collection.add({
-      'title': title,
-      'image': imageURL,
-      'title2': title2 ?? '',
-      'label': label ?? '',
-    });
+  // Menghapus data order
+ Future<void> deleteOrderData(String orderId) async {
+    try {
+      await firestore.collection('order_data').doc(orderId).delete();
+      print('Order data deleted successfully for order $orderId');
+    } catch (error) {
+      print('Failed to delete order data for $orderId: $error');
+      rethrow;
+    }
   }
 
+  // Menyimpan data input ingredient
   Future<void> inputIngredient(String title, String imageURL, {required List<String> values}) async {
-    CollectionReference collection = firestore.collection('input_ingredient');
-    await collection.add({
-      'title': title,
-      'image': imageURL,
-      'values': values,
-    });
+    try {
+      await firestore.collection('input_ingredient').add({
+        'title': title,
+        'image': imageURL,
+        'values': values,
+      });
+      print('New ingredient added successfully');
+    } catch (error) {
+      print('Failed to add new ingredient: $error');
+      rethrow;
+    }
   }
 
+  // Menyimpan data input ingredient (versi lain)
   Future<void> addToInputIngredient(String title, String imageURL, {List<String>? values}) async {
-    CollectionReference collection = firestore.collection('ingredient_quantities');
-    await collection.add({
-      'title': title,
-      'image': imageURL,
-      'values': values ?? [],
-      'timestamp': DateTime.now(),
-    });
+    try {
+      await firestore.collection('input_ingredient').add({
+        'title': title,
+        'image': imageURL,
+        'values': values ?? [],
+        'timestamp': DateTime.now(),
+      });
+      print('New ingredient added successfully');
+    } catch (error) {
+      print('Failed to add new ingredient: $error');
+      rethrow;
+    }
+  }
+
+  // Mengambil semua data kuantitas dari koleksi remaining_stock
+  Future<List<Map<String, dynamic>>> getRemainingStockData() async {
+    final snapshot = await firestore.collection('remaining_stock').get();
+    return snapshot.docs.map((doc) => doc.data()).toList();
+  }
+
+  // Mengambil semua data kuantitas dari koleksi input_item
+  Future<List<Map<String, dynamic>>> getInputItemData() async {
+    final snapshot = await firestore.collection('input_item').get();
+    return snapshot.docs.map((doc) => doc.data()).toList();
+  }
+
+  // Mengambil semua data ingredient dari koleksi input_ingredient
+  Future<List<Map<String, dynamic>>> getIngredientData() async {
+    final snapshot = await firestore.collection('input_ingredient').get();
+    return snapshot.docs.map((doc) => doc.data()).toList();
   }
 
   
 
-
-  // Mengambil semua quantity dari koleksi remaining_quantities
-  Future<List<Map<String, dynamic>>> getRemainingQuantities() async {
-    final snapshot = await firestore.collection('remaining_quantities').get();
-    return snapshot.docs.map((doc) => doc.data()).toList();
-  }
-
-  // Mengambil semua quantity dari koleksi input_quantities
-  Future<List<Map<String, dynamic>>> getInputQuantities() async {
-    final snapshot = await firestore.collection('input_quantities').get();
-    return snapshot.docs.map((doc) => doc.data()).toList();
-  }
-
-  Future<List<Map<String, dynamic>>> getIngredientQuantities() async {
-    final snapshot = await firestore.collection('ingredient_quantities').get();
-    return snapshot.docs.map((doc) => doc.data()).toList();
-  }
-
+  // Menyimpan data item untuk manajemen item
   Future<void> addToItemManagement(String title, String imageURL, {String? title2, String? label}) async {
-    CollectionReference collection = firestore.collection('item_management');
-    await collection.add({
-      'title': title,
-      'image': imageURL,
-      'title2': title2 ?? '',
-      'label': label ?? '',
-    });
-  }
-
-  Future<void> addToIngredientsManagement(String title, String imageURL, {List<String>? values}) async {
-    CollectionReference collection = firestore.collection('ingredients_management');
-    await collection.add({
-      'title': title,
-      'image': imageURL,
-      'values': values ?? [],
-    });
-  }
-
-  Future<void> addOrderData(Map<String, dynamic> orderData) async {
-    CollectionReference collection = firestore.collection('order_data');
     try {
-      await collection.add(orderData);
+      await firestore.collection('input_item').add({
+        'title': title,
+        'image': imageURL,
+        'title2': title2 ?? '',
+        'label': label ?? '',
+      });
+      print('New item added to item management');
+    } catch (error) {
+      print('Failed to add item to item management: $error');
+      rethrow;
+    }
+  }
+
+  // Menyimpan data ingredient untuk manajemen ingredient
+  Future<void> addToIngredientsManagement(String title, String imageURL, {List<String>? values}) async {
+    try {
+      await firestore.collection('input_ingredient').add({
+        'title': title,
+        'image': imageURL,
+        'values': values ?? [],
+      });
+      print('New ingredient added to ingredients management');
+    } catch (error) {
+      print('Failed to add ingredient to ingredients management: $error');
+      rethrow;
+    }
+  }
+
+  // Menyimpan data order
+  Future<void> addOrderData(Map<String, dynamic> orderData) async {
+    try {
+      await firestore.collection('order_data').add(orderData);
       print('Order data added successfully');
     } catch (error) {
       print('Failed to add order data: $error');
@@ -161,16 +165,27 @@ Future<void> updateItemInCollections(
     }
   }
 
-  
-
+  // Mengambil semua data order
   Future<List<Map<String, dynamic>>> getOrderData() async {
-    final snapshot = await firestore.collection('order_data').get();
-    return snapshot.docs.map((doc) => doc.data()).toList();
+    try {
+      final snapshot = await firestore.collection('order_data')
+          .orderBy('customerName', descending: false)
+          .get();
+          
+      return snapshot.docs.map((doc) => {
+        ...doc.data(),
+        'id': doc.id, // Menambahkan document ID ke data
+      }).toList();
+    } catch (error) {
+      print('Failed to fetch order data: $error');
+      rethrow;
+    }
   }
 
+  // Membuat user berdasarkan pin
   Future<User?> createPin(String pin) async {
-    CollectionReference users = firestore.collection('users');
-    final user = await users.doc(pin).get();
+    final usersRef = firestore.collection('users');
+    final user = await usersRef.doc(pin).get();
     if (user.exists) {
       return User(role: user['role'], email: user['email']);
     } else {
@@ -178,14 +193,14 @@ Future<void> updateItemInCollections(
     }
   }
 
+  // Mengambil gambar berdasarkan ID dokumen
   Future<String> getImage(String docId) async {
-    CollectionReference image = firestore.collection('image');
-    final snapshot = await image.doc(docId).get();
+    final imageRef = firestore.collection('image');
+    final snapshot = await imageRef.doc(docId).get();
     return snapshot['image'];
   }
 
-  // Fungsi untuk menghapus arsip yang berusia lebih dari 7 hari
-  static Future<void> deleteOldArchives() async {
+  static Future<void> deleteOldArchives({required String collectionName}) async {
     try {
       final now = DateTime.now();
       final oneHourAgo = now.subtract(const Duration(hours: 1));
@@ -206,17 +221,13 @@ Future<void> updateItemInCollections(
       print('Error deleting old archives: $e');
     }
   }
-
-  
-}
-
- Future<void> deleteOldArchives() async {
+  static Future<void> deleteOldArchivesIngredients({required String collectionName}) async {
     try {
       final now = DateTime.now();
       final oneHourAgo = now.subtract(const Duration(hours: 1));
       
       final QuerySnapshot oldArchives = await FirebaseFirestore.instance
-          .collection('archive_ingredients')
+          .collection(collectionName)
           .where('timestamp', isLessThan: oneHourAgo)
           .get();
 
@@ -226,13 +237,23 @@ Future<void> updateItemInCollections(
       }
       await batch.commit();
 
-      print('Deleted ${oldArchives.docs.length} old archive(s)');
+      print('Deleted ${oldArchives.docs.length} old archive(s) from $collectionName');
     } catch (e) {
-      print('Error deleting old archives: $e');
+      print('Error deleting old archives from $collectionName: $e');
     }
   }
 
-  
+  // Helper method to delete archives from specific collections
+  static Future<void> deleteAllOldArchives() async {
+    await deleteOldArchives(collectionName: 'archive_management');
+    await deleteOldArchivesIngredients(collectionName: 'archive_ingredients');
+  }
+
+}
+
+
+
+ 
 
 
 

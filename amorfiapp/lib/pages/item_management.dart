@@ -22,7 +22,7 @@ class _ItemManagementPageState extends State<ItemManagementPage> {
 
   Stream<QuerySnapshot> get items {
     return _firestore
-        .collection('item_management')
+        .collection('input_item')
         .orderBy('title', descending: false)
         .snapshots();
   }
@@ -38,8 +38,8 @@ class _ItemManagementPageState extends State<ItemManagementPage> {
   Future<void> _deleteItem(String itemId) async {
     try {
       // Hapus item dari "input_item"
-      await _firestore.collection('item_management').doc(itemId).delete();
-      print("Deleted from item_management: $itemId"); // Debug print
+      await _firestore.collection('input_item').doc(itemId).delete();
+      print("Deleted from input_item: $itemId"); // Debug print
 
       // Tampilkan pesan sukses
       ScaffoldMessenger.of(context).showSnackBar(
@@ -68,7 +68,7 @@ class _ItemManagementPageState extends State<ItemManagementPage> {
               
               // Get the item data from Firestore
               DocumentSnapshot doc = await _firestore
-                  .collection('item_management')
+                  .collection('input_item')
                   .doc(itemId)
                   .get();
               

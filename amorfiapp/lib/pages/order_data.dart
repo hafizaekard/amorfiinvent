@@ -266,7 +266,8 @@ void _handleCircleAvatarTap(String orderId) {
                                 'Pickup Date: ${order['pickupDate'] != null ? DateTime.parse(order['pickupDate']).toLocal().toString().split(' ')[0] : 'N/A'}', // Display pickup date
                               ),
                               const SizedBox(height: 5),
-                              Text('Order Items: ${order['orderItems'].join(', ') ?? 'N/A'}'), // Display order items
+                              Text('Order Items: ${order['orderItems'].join(', ') ?? 'N/A'}'),
+                              Text('Payment Status: ${order['payment']}')
                             ],
                           ),
                           isThreeLine: true,
@@ -280,11 +281,11 @@ void _handleCircleAvatarTap(String orderId) {
                                 _handleCircleAvatarTap(order['id'] ?? '');
                               },
                               child: CircleAvatar(
-                                backgroundColor: selectedItemId == order['id']
+                                backgroundColor: selectedItemId != order['id']
                                     ? beigeColor
                                     : blueColor,
                                 radius: 10,
-                                child: selectedItemId == order['id']
+                                child: selectedItemId != order['id']
                                     ? null
                                     : const Icon(Icons.check,
                                         color: Colors.white, size: 15),

@@ -7,7 +7,8 @@ import 'package:flutter/material.dart';
 class AddOrderDataPage extends StatefulWidget {
   final Function onSave; // Callback function to notify parent
 
-  const AddOrderDataPage({super.key, required this.onSave}); // Pass callback in constructor
+  const AddOrderDataPage(
+      {super.key, required this.onSave}); // Pass callback in constructor
 
   @override
   State<AddOrderDataPage> createState() => _AddOrderDataPageState();
@@ -18,14 +19,20 @@ class _AddOrderDataPageState extends State<AddOrderDataPage> {
 
   // Controllers for customer details
   final TextEditingController customerNameController = TextEditingController();
-  final TextEditingController customerNumberController = TextEditingController();
-  final TextEditingController customerAddressController = TextEditingController();
+  final TextEditingController customerNumberController =
+      TextEditingController();
+  final TextEditingController customerAddressController =
+      TextEditingController();
 
   // List to hold controllers for order items
-  final List<TextEditingController> orderItemControllers = [TextEditingController()]; // Start with one item
+  final List<TextEditingController> orderItemControllers = [
+    TextEditingController()
+  ]; // Start with one item
 
   // Variable to store selected date
   DateTime? selectedDate;
+
+  String? selectedOption;
 
   // Function to show date picker
   Future<void> _selectDate(BuildContext context) async {
@@ -59,11 +66,13 @@ class _AddOrderDataPageState extends State<AddOrderDataPage> {
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    contentPadding:
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   ),
                 ),
               ),
-              const SizedBox(width: 8), // Space between TextField and delete button
+              const SizedBox(
+                  width: 8), // Space between TextField and delete button
               if (i > 0) // Show delete button only for items after the first
                 IconButton(
                   icon: const Icon(Icons.delete, color: Colors.red),
@@ -80,7 +89,8 @@ class _AddOrderDataPageState extends State<AddOrderDataPage> {
         TextButton(
           onPressed: () {
             setState(() {
-              orderItemControllers.add(TextEditingController()); // Add new controller
+              orderItemControllers
+                  .add(TextEditingController()); // Add new controller
             });
           },
           child: const Text('Add Item'),
@@ -129,7 +139,8 @@ class _AddOrderDataPageState extends State<AddOrderDataPage> {
                   // Container for Customer Data
                   Container(
                     width: 500, // Set the width for customer container
-                    margin: const EdgeInsets.only(bottom: 20), // Margin below customer container
+                    margin: const EdgeInsets.only(
+                        bottom: 20), // Margin below customer container
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
                       color: Colors.white,
@@ -139,7 +150,8 @@ class _AddOrderDataPageState extends State<AddOrderDataPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Customer Data', style: blackTextStyle.copyWith(fontSize: 16)),
+                        Text('Customer Data',
+                            style: blackTextStyle.copyWith(fontSize: 16)),
                         const SizedBox(height: 10),
                         TextField(
                           controller: customerNameController,
@@ -151,7 +163,8 @@ class _AddOrderDataPageState extends State<AddOrderDataPage> {
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
                             ),
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                            contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 8),
                           ),
                         ),
                         const SizedBox(height: 10), // Space between TextFields
@@ -165,7 +178,8 @@ class _AddOrderDataPageState extends State<AddOrderDataPage> {
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
                             ),
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                            contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 8),
                           ),
                         ),
                         const SizedBox(height: 10), // Space between TextFields
@@ -179,7 +193,8 @@ class _AddOrderDataPageState extends State<AddOrderDataPage> {
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
                             ),
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                            contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 8),
                           ),
                         ),
                       ],
@@ -198,10 +213,12 @@ class _AddOrderDataPageState extends State<AddOrderDataPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Detailed Order Data', style: blackTextStyle.copyWith(fontSize: 16)),
+                        Text('Detailed Order Data',
+                            style: blackTextStyle.copyWith(fontSize: 16)),
                         const SizedBox(height: 10),
                         buildOrderItemFields(), // Use the buildOrderItemFields function
-                        const SizedBox(height: 10), // Space before the date picker
+                        const SizedBox(
+                            height: 10), // Space before the date picker
                         // Date Picker
                         GestureDetector(
                           onTap: () => _selectDate(context),
@@ -209,16 +226,19 @@ class _AddOrderDataPageState extends State<AddOrderDataPage> {
                             decoration: BoxDecoration(
                               color: whiteColor,
                               borderRadius: BorderRadius.circular(8),
-                              border: Border.all(color: greyColor), // Optional border
+                              border: Border.all(
+                                  color: greyColor), // Optional border
                             ),
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 8),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
                                   selectedDate == null
                                       ? 'Select Date'
-                                      : '${selectedDate!.toLocal()}'.split(' ')[0], // Format the date
+                                      : '${selectedDate!.toLocal()}'
+                                          .split(' ')[0], // Format the date
                                   style: greyTextStyle.copyWith(fontSize: 14),
                                 ),
                                 Icon(Icons.calendar_today, color: blackColor),
@@ -233,61 +253,145 @@ class _AddOrderDataPageState extends State<AddOrderDataPage> {
                   const SizedBox(height: 20), // Space before the save button
                   // Save Button outside of the container
                   // Save Button outside of the container
-SizedBox(
-  width: 90,
-  child: ButtonCustom(
-    label: 'Save',
-    onPressed: () async {
-      final customerName = customerNameController.text;
-      final customerNumber = customerNumberController.text;
-      final customerAddress = customerAddressController.text;
-      
-      // Validation
-      if (customerName.isEmpty || customerNumber.isEmpty || customerAddress.isEmpty || orderItemControllers.every((controller) => controller.text.isEmpty)) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Please fill all fields and add at least one order item.'),
-          ),
-        );
-        return;
-      }
+                  Container(
+                    width: 500, // Set the width for order items container
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.grey),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Detailed Payment',
+                            style: blackTextStyle.copyWith(fontSize: 16)),
+                        const SizedBox(height: 10),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            Expanded(
+                              flex: 1,
+                              child: Row(
+                                children: [
+                                  Radio(
+                                      value: "Belum Bayar",
+                                      groupValue: selectedOption,
+                                      onChanged: (index) {
+                                        selectedOption = index;
+                                        setState(() {
+                                          
+                                        });
+                                      }),
+                                  Expanded(
+                                    child: Text('Belum Bayar'),
+                                  )
+                                ],
+                              ),
+                            ),
+                            Expanded(
+                              flex: 1,
+                              child: Row(
+                                children: [
+                                  Radio(
+                                      value: "Sudah DP",
+                                      groupValue: selectedOption,
+                                      onChanged: (index) {
+                                        selectedOption = index;
+                                        setState(() {
+                                          
+                                        });
+                                      }),
+                                  Expanded(child: Text('Sudah DP'))
+                                ],
+                              ),
+                            ),
+                            Expanded(
+                              flex: 1,
+                              child: Row(
+                                children: [
+                                  Radio(
+                                      value: "Lunas",
+                                      groupValue: selectedOption,
+                                      onChanged: (index) {
+                                        selectedOption = index;
+                                        setState(() {
+                                          
+                                        });
+                                      }),
+                                  Expanded(child: Text('Lunas'))
+                                ],
+                              ),
+                            ),
+                          ],
+                        )
+                      ],
+                    ),
+                  ),
 
-      // Show loading indicator
-     
+                  SizedBox(
+                    width: 90,
+                    child: ButtonCustom(
+                      label: 'Save',
+                      onPressed: () async {
+                        final customerName = customerNameController.text;
+                        final customerNumber = customerNumberController.text;
+                        final customerAddress = customerAddressController.text;
 
-      // Save data to Firestore, including the selected date
-      try {
-        await firestoreHelper.addOrderData({
-          'customerName': customerName,
-          'customerNumber': customerNumber,
-          'customerAddress': customerAddress,
-          'pickupDate': selectedDate?.toIso8601String(), // Save as ISO string
-          'orderItems': orderItemControllers.map((controller) => controller.text).toList(),
-        });
+                        // Validation
+                        if (customerName.isEmpty ||
+                            customerNumber.isEmpty ||
+                            customerAddress.isEmpty ||
+                            orderItemControllers.every(
+                                (controller) => controller.text.isEmpty)) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                  'Please fill all fields and add at least one order item.'),
+                            ),
+                          );
+                          return;
+                        }
 
-        // Show success message after saving
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Data saved successfully'), // Success message
-          ),
-        );
+                        // Show loading indicator
 
-        // Call the onSave callback to refresh the order data list
-        widget.onSave();
+                        // Save data to Firestore, including the selected date
+                        try {
+                          await firestoreHelper.addOrderData({
+                            'customerName': customerName,
+                            'customerNumber': customerNumber,
+                            'customerAddress': customerAddress,
+                            'pickupDate': selectedDate
+                                ?.toIso8601String(), // Save as ISO string
+                            'orderItems': orderItemControllers
+                                .map((controller) => controller.text)
+                                .toList(),
+                                "payment" : selectedOption
+                          });
 
-        // Close the page after saving
-        Navigator.pop(context);
-      } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error saving order: $e'),
-          ),
-        );
-      }
-    },
-  ),
-),
+                          // Show success message after saving
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                  'Data saved successfully'), // Success message
+                            ),
+                          );
 
+                          // Call the onSave callback to refresh the order data list
+                          widget.onSave();
+
+                          // Close the page after saving
+                          Navigator.pop(context);
+                        } catch (e) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Error saving order: $e'),
+                            ),
+                          );
+                        }
+                      },
+                    ),
+                  ),
                 ],
               ),
             ),

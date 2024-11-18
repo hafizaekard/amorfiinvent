@@ -55,6 +55,9 @@ class _ProductionPageState extends State<ProductionPage> {
   final Stream<QuerySnapshot> _usersStream =
       FirebaseFirestore.instance.collection('input_item').snapshots();
 
+  Query collectionReference =
+      FirebaseFirestore.instance.collection("input_item").orderBy('quantity', descending: true);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -109,6 +112,7 @@ class _ProductionPageState extends State<ProductionPage> {
             const SizedBox(height: 20),
             Expanded(
               child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Column(
                     children: [
@@ -192,9 +196,39 @@ class _ProductionPageState extends State<ProductionPage> {
                       }),
                     ],
                   ),
+                  Container(
+                    margin: EdgeInsets.only(left: 20, bottom: 20),
+                    width: 400,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(15)
+                    ),
+                    padding: const EdgeInsets.all(20),
+                    child: FutureBuilder(future: collectionReference.limit(8).get(), builder: (context, snapshot) {
+                      if (snapshot.hasError) {
+                            return Text('Something went wrong');
+                          }
+
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return Text("Loading");
+                          }
+                          return Column(
+                            children: snapshot.data!.docs
+                                .map((DocumentSnapshot document) {
+                              Map<String, dynamic> data =
+                                  document.data()! as Map<String, dynamic>;
+                              return ListTile(
+                                title: Text(data['title']),
+                                subtitle: Text(data['quantity'].toString()),
+                              );
+                            }).toList(),
+                          );
+                    },)
+                  ),
                   const SizedBox(width: 20),
                   Expanded(
-                    flex: 2,
+                    flex: 4,
                     child: Padding(
                       padding: const EdgeInsets.only(bottom: 20),
                       child: Container(
@@ -263,6 +297,7 @@ class _ProductionPageState extends State<ProductionPage> {
                             }),
                       ),
                     ),
+                  
                   ),
                 ],
               ),

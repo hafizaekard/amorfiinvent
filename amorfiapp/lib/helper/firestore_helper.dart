@@ -4,18 +4,7 @@ class FirestoreHelper {
   FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   // Memperbarui kuantitas berdasarkan koleksi tertentu
-  Future<void> updateProductQuantity(String productId, int quantity) async {
-    try {
-      await FirebaseFirestore.instance
-          .collection('products')
-          .doc(productId)
-          .update({'quantity': quantity});
-      print('Quantity updated successfully for product $productId');
-    } catch (error) {
-      print('Failed to update quantity for product $productId: $error');
-      rethrow;
-    }
-  }
+  
 
   // Memperbarui data produk
   Future<void> updateProductData(String productId, String title, String imageUrl, {String? title2, String? label}) async {
@@ -26,10 +15,7 @@ class FirestoreHelper {
         'title2': title2 ?? '',
         'label': label ?? '',
       };
-      await FirebaseFirestore.instance
-          .collection('products')
-          .doc(productId)
-          .update(data);
+      
       await FirebaseFirestore.instance
           .collection('remaining_stock')
           .doc(productId)
@@ -51,7 +37,6 @@ class FirestoreHelper {
         'label': label ?? '',
         'quantity': 0,
       };
-      await firestore.collection('products').add(productData);
       await firestore.collection('remaining_stock').add(productData);
       await firestore.collection('input_item').add(productData);
       print('New product added successfully');

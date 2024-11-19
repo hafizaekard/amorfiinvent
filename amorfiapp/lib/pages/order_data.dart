@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:amorfiapp/helper/firestore_helper.dart';
 import 'package:amorfiapp/pages/add_order_data.dart';
 import 'package:amorfiapp/pages/edit_order_data.dart';
@@ -31,8 +33,8 @@ class _OrderDataPageState extends State<OrderDataPage> {
         .snapshots();
   }
 
-  void _navigateToPage(Widget page) {
-    Navigator.of(context).push(CustomPageRoute(page: page));
+  Future <void> _navigateToPage(Widget page) async {
+    await Navigator.of(context).push(CustomPageRoute(page: page));
   }
 
   
@@ -95,10 +97,15 @@ class _OrderDataPageState extends State<OrderDataPage> {
               
               if (mounted && doc.exists) {
                 Map<String, dynamic> itemData = doc.data() as Map<String, dynamic>;
-                _navigateToPage(EditOrderDataPage(
+                log(orderData, name: "orderData");
+                  log(itemData.toString(), name: "itemData");
+                await _navigateToPage(EditOrderDataPage(
                   itemId: orderData,
                   itemData: itemData,
                 ));
+                
+                  _fetchOrderData();
+                
               }
             },
             child: const Text('Edit'),
@@ -263,7 +270,7 @@ void _handleCircleAvatarTap(String orderId) {
                               Text('Number: ${order['customerNumber'] ?? 'N/A'}'), // Display customer number
                               Text('Address: ${order['customerAddress'] ?? 'N/A'}'), // Display customer address
                               Text(
-                                'Pickup Date: ${order['pickupDate'] != null ? DateTime.parse(order['pickupDate']).toLocal().toString().split(' ')[0] : 'N/A'}', // Display pickup date
+                                'Pickup Date: ${order['pickupDate'] ?? 'N/A'}', // Display pickup date
                               ),
                               const SizedBox(height: 5),
                               Text('Order Items: ${order['orderItems'].join(', ') ?? 'N/A'}'),

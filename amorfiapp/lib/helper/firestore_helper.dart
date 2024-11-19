@@ -150,6 +150,10 @@ class FirestoreHelper {
     }
   }
 
+  Future<void> editOrderData(Map<String, dynamic> orderData, String id) async {
+    await firestore.collection('order_data').doc(id).update(orderData);
+  }
+
   // Mengambil semua data order
   Future<List<Map<String, dynamic>>> getOrderData() async {
     try {

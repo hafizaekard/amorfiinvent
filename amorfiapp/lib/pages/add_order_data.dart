@@ -328,7 +328,7 @@ class _AddOrderDataPageState extends State<AddOrderDataPage> {
                       ],
                     ),
                   ),
-
+                  const SizedBox(height: 20),
                   SizedBox(
                     width: 90,
                     child: ButtonCustom(

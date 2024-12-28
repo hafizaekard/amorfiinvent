@@ -402,11 +402,7 @@ void _listenToQuantityChanges() {
                                 _increaseQuantity(document.id);
                                 log(document.id.toString(),
                                     name: 'Document ID');
-                                await firebaseFirestore
-                                    .collection('input_item')
-                                    .doc(document.id)
-                                    .update(
-                                        {'quantity': FieldValue.increment(1)});
+                                
                               },
                               icon: Container(
                                 padding: const EdgeInsets.all(8),

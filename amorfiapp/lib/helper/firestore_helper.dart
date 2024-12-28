@@ -192,11 +192,11 @@ class FirestoreHelper {
   static Future<void> deleteOldArchives({required String collectionName}) async {
     try {
       final now = DateTime.now();
-      final oneHourAgo = now.subtract(const Duration(hours: 1));
+      final sevenDaysAgo = now.subtract(const Duration(days: 7));
       
       final QuerySnapshot oldArchives = await FirebaseFirestore.instance
           .collection('archive_management')
-          .where('timestamp', isLessThan: oneHourAgo)
+          .where('timestamp', isLessThan: sevenDaysAgo)
           .get();
 
       final batch = FirebaseFirestore.instance.batch();
@@ -213,11 +213,11 @@ class FirestoreHelper {
   static Future<void> deleteOldArchivesIngredients({required String collectionName}) async {
     try {
       final now = DateTime.now();
-      final oneHourAgo = now.subtract(const Duration(hours: 1));
+      final sevenDaysAgo = now.subtract(const Duration(hours: 1));
       
       final QuerySnapshot oldArchives = await FirebaseFirestore.instance
           .collection(collectionName)
-          .where('timestamp', isLessThan: oneHourAgo)
+          .where('timestamp', isLessThan: sevenDaysAgo)
           .get();
 
       final batch = FirebaseFirestore.instance.batch();
@@ -239,13 +239,6 @@ class FirestoreHelper {
   }
 
 }
-
-
-
- 
-
-
-
 class User {
   final String role;
   final String email;

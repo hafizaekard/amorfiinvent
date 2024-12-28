@@ -83,14 +83,7 @@ class _EditOrderDataPageState extends State<EditOrderDataPage> {
             ),
           ],
         ),
-        const SizedBox(height: 10), // Space before the add item button
-        // Button to add more order items
-        TextButton(
-          onPressed: () {
-            setState(() {});
-          },
-          child: const Text('Add Item'),
-        ),
+        
       ],
     );
   }
@@ -326,7 +319,7 @@ class _EditOrderDataPageState extends State<EditOrderDataPage> {
                       ],
                     ),
                   ),
-
+                  const SizedBox(height: 20),
                   SizedBox(
                     width: 90,
                     child: ButtonCustom(

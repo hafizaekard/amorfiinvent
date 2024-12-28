@@ -28,7 +28,7 @@ class _IngredientsArchiveManagementPageState extends State<IngredientsArchiveMan
     FirestoreHelper.deleteOldArchivesIngredients(collectionName: 'archive_ingredients');
     
     // Set up periodic cleanup
-    _cleanupTimer = Timer.periodic(const Duration(hours: 1), (timer) {
+    _cleanupTimer = Timer.periodic(const Duration(days: 7), (timer) {
       FirestoreHelper.deleteOldArchivesIngredients(collectionName: 'archive_ingredients');
     });
   }

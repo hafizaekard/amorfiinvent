@@ -29,7 +29,7 @@ class _ProductionArchiveManagementPageState
     FirestoreHelper.deleteOldArchives(collectionName: 'archive_management');
     
     // Set up periodic cleanup 
-    _cleanupTimer = Timer.periodic(const Duration(hours: 1), (timer) {
+    _cleanupTimer = Timer.periodic(const Duration(days: 7), (timer) {
       FirestoreHelper.deleteOldArchives(collectionName: 'archive_management');
     });
   }

@@ -55,8 +55,11 @@ class _ProductionPageState extends State<ProductionPage> {
   final Stream<QuerySnapshot> _usersStream =
       FirebaseFirestore.instance.collection('input_item').snapshots();
 
-  Query collectionReference =
-      FirebaseFirestore.instance.collection("input_item").orderBy('quantity', descending: true);
+  Stream<QuerySnapshot> get topProductsStream => FirebaseFirestore.instance
+      .collection("input_item")
+      .orderBy('quantity', descending: true)
+      .limit(6)
+      .snapshots();
 
   @override
   Widget build(BuildContext context) {
@@ -198,33 +201,55 @@ class _ProductionPageState extends State<ProductionPage> {
                   ),
                   Container(
                     margin: EdgeInsets.only(left: 20, bottom: 20),
-                    width: 400,
+                    width: 250,
                     decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(15)
+                      color: whiteColor,
+                      borderRadius: BorderRadius.circular(15),
                     ),
                     padding: const EdgeInsets.all(20),
-                    child: FutureBuilder(future: collectionReference.limit(8).get(), builder: (context, snapshot) {
-                      if (snapshot.hasError) {
-                            return Text('Something went wrong');
-                          }
-
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return Text("Loading");
-                          }
-                          return Column(
-                            children: snapshot.data!.docs
-                                .map((DocumentSnapshot document) {
-                              Map<String, dynamic> data =
-                                  document.data()! as Map<String, dynamic>;
-                              return ListTile(
-                                title: Text(data['title']),
-                                subtitle: Text(data['quantity'].toString()),
+                    child: SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment
+                            .start, // Menyelaraskan teks statis di kiri
+                        children: [
+                          // Tambahkan teks statis di sini
+                          Text('The top produced product today',
+                              textAlign: TextAlign.center,
+                              style: blackTextStyle.copyWith(
+                                  fontSize: 18, fontWeight: semiBold)),
+                          const SizedBox(height: 10),
+                          StreamBuilder<QuerySnapshot>(
+                            stream: topProductsStream,
+                            builder: (context, snapshot) {
+                              if (snapshot.hasError) {
+                                return Text('Something went wrong');
+                              }
+                      
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return CircularProgressIndicator();
+                              }
+                      
+                              return Column(
+                                children: snapshot.data!.docs
+                                    .map((DocumentSnapshot document) {
+                                  Map<String, dynamic> data =
+                                      document.data()! as Map<String, dynamic>;
+                                  return ListTile(
+                                    title: Text(data['title'],
+                                        style: blackTextStyle.copyWith(
+                                            fontSize: 16)),
+                                    subtitle: Text('${data['quantity']} produced',
+                                        style: blackTextStyle.copyWith(
+                                            fontSize: 16)),
+                                  );
+                                }).toList(),
                               );
-                            }).toList(),
-                          );
-                    },)
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                   const SizedBox(width: 20),
                   Expanded(
@@ -236,7 +261,9 @@ class _ProductionPageState extends State<ProductionPage> {
                           color: whiteColor,
                           borderRadius: BorderRadius.circular(30),
                         ),
-                        child: StreamBuilder(
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: StreamBuilder(
                             stream: _usersStream,
                             builder: (context, snapshot) {
                               if (snapshot.hasError) {
@@ -247,17 +274,17 @@ class _ProductionPageState extends State<ProductionPage> {
                                   ConnectionState.waiting) {
                                 return Text("Loading");
                               }
+
                               return SizedBox(
-                                height: 600,
+                                width:
+                                    800, // Atur lebar maksimum grafik di sini
                                 child: SfCartesianChart(
                                   // Initialize category axis
-                                  primaryXAxis: const CategoryAxis(
+                                  primaryXAxis: CategoryAxis(
                                     arrangeByIndex: true,
                                     axisLine: AxisLine(width: 0),
-                                    // interval: 1,
                                     name: 'Quantity',
                                   ),
-
                                   series: [
                                     LineSeries(
                                       // Bind data source
@@ -279,25 +306,22 @@ class _ProductionPageState extends State<ProductionPage> {
                                           sales['quantity'],
                                       // Enable data label
                                       markerSettings: MarkerSettings(
-                                        isVisible:
-                                            true, // Menampilkan marker di setiap titik
-                                        shape: DataMarkerType
-                                            .circle, // Bentuk marker (lingkaran)
-                                        borderColor:
-                                            orangeColor, // Warna border marker
-                                        borderWidth:
-                                            2, // Ketebalan border marker
-                                        color: orangeColor, // Warna isi marker
+                                        isVisible: true,
+                                        shape: DataMarkerType.circle,
+                                        borderColor: orangeColor,
+                                        borderWidth: 2,
+                                        color: orangeColor,
                                       ),
                                       color: blueColor,
                                     ),
                                   ],
                                 ),
                               );
-                            }),
+                            },
+                          ),
+                        ),
                       ),
                     ),
-                  
                   ),
                 ],
               ),

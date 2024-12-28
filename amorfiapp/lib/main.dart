@@ -1,5 +1,5 @@
 import 'package:amorfiapp/controller/image_notifier.dart';
-import 'package:amorfiapp/pages/production_page.dart';
+import 'package:amorfiapp/view/splashscreen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: true,
         ),
-        home: ProductionPage(),
+        home: SplashScreen(),
         // initialRoute: '/',
         // routes: {
         //   '/': (context) => const SignInOptionsPage(),

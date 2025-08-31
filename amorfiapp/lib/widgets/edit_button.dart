@@ -3,10 +3,14 @@ import 'package:flutter/material.dart';
 
 class EditButton extends StatelessWidget {
   final VoidCallback onPressed;
-  final String label; // Tambahkan parameter label
-  final double width; // Tambahkan parameter width
+  final String label;
+  final double width;
 
-  const EditButton({super.key, required this.onPressed, required this.label, required this.width});
+  const EditButton(
+      {super.key,
+      required this.onPressed,
+      required this.label,
+      required this.width});
 
   @override
   Widget build(BuildContext context) {
@@ -14,12 +18,12 @@ class EditButton extends StatelessWidget {
       onTap: onPressed,
       child: Container(
         width: width,
-        height: 40, // Tinggi sama seperti UpdateDataButton
+        height: 40,
         decoration: BoxDecoration(
           color: blueColor,
           borderRadius: BorderRadius.circular(8),
         ),
-        child: Center( // Pusatkan teks di dalam Container
+        child: Center(
           child: Text(
             label,
             style: TextStyle(

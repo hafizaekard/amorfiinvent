@@ -2,6 +2,8 @@ import 'package:amorfiapp/helper/firestore_helper.dart';
 import 'package:amorfiapp/pages/ingredients_archive_management.dart';
 import 'package:amorfiapp/pages/ingredients_management.dart';
 import 'package:amorfiapp/pages/input_ingredient.dart';
+import 'package:amorfiapp/pages/output_ingredient.dart';
+import 'package:amorfiapp/pages/stock_monitoring.dart';
 import 'package:amorfiapp/routes/custom_page_route.dart';
 import 'package:amorfiapp/shared/shared_values.dart';
 import 'package:amorfiapp/widgets/ingredient_app_drawer.dart';
@@ -27,14 +29,24 @@ class _IngredientsPageState extends State<IngredientsPage> {
     _navigateToPage(const IngredientsManagementPage());
   }
 
+  void _navigateToOutputIngredientPage() {
+    _navigateToPage(const OutputIngredientPage());
+  }
+
+  void _navigateToStockMonitoringPage() {
+    _navigateToPage(const StockMonitoringPage());
+  }
+
   void _navigateToIngredientsArchiveManagementPage(String currentPage) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => IngredientsArchiveManagementPage(currentPage: currentPage),
+        builder: (context) =>
+            IngredientsArchiveManagementPage(currentPage: currentPage),
       ),
     );
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -81,12 +93,13 @@ class _IngredientsPageState extends State<IngredientsPage> {
       ),
       drawer: const IngredientAppDrawer(),
       backgroundColor: lightGreyColor,
-      body: Stack(
-        children: [
-          Column(
+      body: Center(
+        child: SingleChildScrollView(
+          child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
+              const SizedBox(height: 50),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -97,19 +110,34 @@ class _IngredientsPageState extends State<IngredientsPage> {
                   _buildOptionContainer(2),
                 ],
               ),
+              const SizedBox(height: 30),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  _buildOptionContainer(3),
+                  const SizedBox(width: 30),
+                  _buildOptionContainer(4),
+                ],
+              ),
+              const SizedBox(height: 50),
             ],
           ),
-        ],
+        ),
       ),
     );
   }
 
   Widget _buildOptionContainer(int index) {
     return FutureBuilder<String>(
-      future: FirestoreHelper().getImage(
-        index == 0 ? 'input_ingredient' : 
-        index == 1 ? 'item_management' : 'archive_management'
-      ),
+      future: FirestoreHelper().getImage(index == 0
+          ? 'input_ingredient'
+          : index == 1
+              ? 'item_management'
+              : index == 2
+                  ? 'archive_management'
+                  : index == 3
+                      ? 'output_ingredient'
+                      : 'stock_monitoring'),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Container(
@@ -169,14 +197,13 @@ class _IngredientsPageState extends State<IngredientsPage> {
           );
         }
 
-        // Mengembalikan widget ketika snapshot memiliki data
         return Container(
           height: 150,
           width: 230,
           decoration: BoxDecoration(
             color: whiteColor,
             image: DecorationImage(
-              image: NetworkImage(snapshot.data!), // Menampilkan gambar dari data
+              image: NetworkImage(snapshot.data!),
               fit: BoxFit.cover,
             ),
             boxShadow: [
@@ -190,20 +217,23 @@ class _IngredientsPageState extends State<IngredientsPage> {
             borderRadius: BorderRadius.circular(30),
           ),
           child: InkWell(
-          onTap: () {
-            // Logika navigasi berdasarkan index
-            if (index == 0) {
-              _navigateToInputIngredientPage();
-            } else if (index == 1) {
-              _navigateToIngredientsManagementPage();
-            }else if (index == 2) {
-              _navigateToIngredientsArchiveManagementPage('Ingredients Archive');
-            }
-
-          },
-          highlightColor: transparentColor,
-          splashColor: transparentColor,
-        ),
+            onTap: () {
+              if (index == 0) {
+                _navigateToInputIngredientPage();
+              } else if (index == 1) {
+                _navigateToIngredientsManagementPage();
+              } else if (index == 2) {
+                _navigateToIngredientsArchiveManagementPage(
+                    'Ingredients Archive');
+              } else if (index == 3) {
+                _navigateToOutputIngredientPage();
+              } else if (index == 4) {
+                _navigateToStockMonitoringPage();
+              }
+            },
+            highlightColor: transparentColor,
+            splashColor: transparentColor,
+          ),
         );
       },
     );

@@ -7,8 +7,8 @@ class ButtonCustom extends StatelessWidget {
 
   const ButtonCustom({
     super.key,
-    required this.label, // Label akan menjadi judul tombol
-    required this.onPressed, // Fungsi yang akan dipanggil saat tombol ditekan
+    required this.label,
+    required this.onPressed,
   });
 
   @override
@@ -19,14 +19,14 @@ class ButtonCustom extends StatelessWidget {
         backgroundColor: blueColor,
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10), // Menambahkan border radius
+          borderRadius: BorderRadius.circular(10),
         ),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            label, // Menggunakan label sebagai teks tombol
+            label,
             style: whiteTextStyle.copyWith(fontSize: 16, fontWeight: semiBold),
           ),
         ],

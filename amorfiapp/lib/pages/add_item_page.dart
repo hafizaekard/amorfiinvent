@@ -6,6 +6,7 @@ import 'package:amorfiapp/widgets/back_button_custom.dart';
 import 'package:amorfiapp/widgets/pick_image_button.dart';
 import 'package:amorfiapp/widgets/save_button_custom.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class AddItemPage extends StatefulWidget {
@@ -19,10 +20,41 @@ class _AddItemPageState extends State<AddItemPage> {
   final StorageHelper _storageHelper = StorageHelper();
   final FirestoreHelper _firestoreHelper = FirestoreHelper();
   final TextEditingController _titleController = TextEditingController();
+  final TextEditingController _priceController = TextEditingController();
   final TextEditingController _title2Controller = TextEditingController();
   String? _selectedLabel;
   bool _isLoading = false;
   final List<String> _labelOptions = ['Ukuran', 'Topping', 'Motif', 'Rasa'];
+
+  @override
+  void initState() {
+    super.initState();
+    _priceController.addListener(_formatPrice);
+  }
+
+  void _formatPrice() {
+    final text = _priceController.text.replaceAll(RegExp(r'[^0-9]'), '');
+    if (text.isEmpty) return;
+
+    final formatter = NumberFormat.decimalPattern('id');
+    final newText = formatter.format(int.parse(text));
+
+    if (newText != _priceController.text) {
+      _priceController.value = TextEditingValue(
+        text: newText,
+        selection: TextSelection.collapsed(offset: newText.length),
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    _priceController.removeListener(_formatPrice);
+    _titleController.dispose();
+    _priceController.dispose();
+    _title2Controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -76,6 +108,26 @@ class _AddItemPageState extends State<AddItemPage> {
                               fillColor: whiteColor,
                               filled: true,
                               hintText: 'Item Name',
+                              hintStyle: greyTextStyle,
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        SizedBox(
+                          height: 75,
+                          child: TextField(
+                            controller: _priceController,
+                            keyboardType: TextInputType.number,
+                            decoration: InputDecoration(
+                              fillColor: whiteColor,
+                              filled: true,
+                              prefixText: 'Rp',
+                              prefixStyle: blackTextStyle,
+                              hintText: 'Price',
                               hintStyle: greyTextStyle,
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
@@ -139,6 +191,14 @@ class _AddItemPageState extends State<AddItemPage> {
                             ),
                           ],
                         ),
+                        const SizedBox(height: 10),
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            'Harga akan ditampilkan di halaman manajemen item setelah disimpan.',
+                            style: greyTextStyle.copyWith(fontSize: 12),
+                          ),
+                        ),
                         const SizedBox(height: 20),
                         SaveButtonCustom(
                           isLoading: _isLoading,
@@ -151,29 +211,29 @@ class _AddItemPageState extends State<AddItemPage> {
                                   });
 
                                   try {
-                                    // Mengunggah gambar ke Storage
                                     final imageUrl = await _storageHelper.uploadImageToStorage(
                                       context.read<ImageNotifier>().image!,
                                       _titleController.text,
                                     );
 
-                                    // Menyimpan data item baru
+                                    final plainPrice = _priceController.text.replaceAll('.', '');
+
                                     await _firestoreHelper.addItem(
                                       _titleController.text,
                                       imageUrl,
                                       title2: _title2Controller.text.isNotEmpty ? _title2Controller.text : null,
                                       label: _selectedLabel,
+                                      price: int.tryParse(plainPrice) ?? 0,
                                     );
 
-                                    // Mengosongkan input dan reset state
                                     context.read<ImageNotifier>().resetImage();
                                     _titleController.clear();
+                                    _priceController.clear();
                                     _title2Controller.clear();
                                     setState(() {
                                       _selectedLabel = null;
                                     });
 
-                                    // Menampilkan SnackBar
                                     if (mounted) {
                                       ScaffoldMessenger.of(context).showSnackBar(
                                         const SnackBar(
@@ -182,7 +242,6 @@ class _AddItemPageState extends State<AddItemPage> {
                                       );
                                     }
                                   } catch (e) {
-                                    // Menampilkan SnackBar jika terjadi kesalahan
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
                                         content: Text('Failed to add item: $e'),

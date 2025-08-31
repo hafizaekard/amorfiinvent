@@ -7,6 +7,7 @@ import 'package:amorfiapp/shared/shared_values.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 
 class EditItemPage extends StatefulWidget {
   final String itemId;
@@ -26,6 +27,7 @@ class _EditItemPageState extends State<EditItemPage> {
   final _formKey = GlobalKey<FormState>();
   late TextEditingController _titleController;
   late TextEditingController _title2Controller;
+  late TextEditingController _priceController;
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   String _selectedLabel = "-";
@@ -38,19 +40,19 @@ class _EditItemPageState extends State<EditItemPage> {
   ];
 
   ImagePickerHelper imagePickerHelper = ImagePickerHelper();
-  File? image ;
+  File? image;
   String imageURL = "";
 
   @override
   void initState() {
     super.initState();
-    // Initialize controllers with existing data
     _titleController = TextEditingController(text: widget.itemData['title']);
     _title2Controller = TextEditingController(text: widget.itemData['title2']);
-    // _labelController = TextEditingController(text: widget.itemData['label']);
-    _selectedLabel = (widget.itemData["label"]).toString().isEmpty
-        ? "-"
-        : widget.itemData["label"];
+    final price = widget.itemData['price'];
+    _priceController = TextEditingController(
+      text: price != null ? NumberFormat('#,###').format(price) : '',
+    );
+    _selectedLabel = (widget.itemData["label"]).toString().isEmpty ? "-" : widget.itemData["label"];
     log(widget.itemData["label"]);
   }
 
@@ -58,7 +60,7 @@ class _EditItemPageState extends State<EditItemPage> {
   void dispose() {
     _titleController.dispose();
     _title2Controller.dispose();
-    // _labelController.dispose();
+    _priceController.dispose();
     super.dispose();
   }
 
@@ -67,13 +69,14 @@ class _EditItemPageState extends State<EditItemPage> {
   Future<void> _updateItem() async {
     if (_formKey.currentState!.validate()) {
       try {
-        await _firestore
-            .collection('input_item')
-            .doc(widget.itemId)
-            .update({
+        final rawPrice = _priceController.text.replaceAll('.', '').replaceAll(',', '');
+        final int? price = int.tryParse(rawPrice);
+
+        await _firestore.collection('input_item').doc(widget.itemId).update({
           'title': _titleController.text,
           'title2': _title2Controller.text,
           'label': _selectedLabel,
+          'price': price ?? 0,
           'image': imageURL == "" ? widget.itemData["image"] : imageURL,
         });
 
@@ -91,6 +94,11 @@ class _EditItemPageState extends State<EditItemPage> {
         }
       }
     }
+  }
+
+  String _formatNumber(String s) {
+    final number = int.tryParse(s.replaceAll('.', '').replaceAll(',', ''));
+    return number == null ? '' : NumberFormat('#,###').format(number);
   }
 
   @override
@@ -132,44 +140,34 @@ class _EditItemPageState extends State<EditItemPage> {
                               child: Material(
                                 borderRadius: BorderRadius.circular(8),
                                 child: Container(
-                                  width: 160, // Lebih lebar dari sebelumnya
+                                  width: 160,
                                   height: 80,
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 16, vertical: 12),
+                                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                                   decoration: BoxDecoration(
                                     color: whiteColor,
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                   child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
+                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                     children: [
                                       IconButton(
                                         padding: EdgeInsets.zero,
-                                        iconSize:
-                                            32, // Ukuran icon yang lebih kecil
+                                        iconSize: 32,
                                         onPressed: () async {
                                           XFile? result = await imagePickerHelper.pickImage(ImageSource.gallery);
                                           if (result != null) {
                                             image = File(result.path);
                                             imageURL = await storageHelper.uploadImageToStorage(image!, _titleController.text);
-
-                                            setState(() {
-                                              
-                                            });
+                                            setState(() {});
                                           }
                                           Navigator.pop(context);
-                                          
                                         },
                                         icon: const Icon(Icons.image),
                                       ),
                                       IconButton(
                                         padding: EdgeInsets.zero,
-                                        iconSize:
-                                            32, 
-                                        onPressed: () async {
-                                         
-                                        },
+                                        iconSize: 32,
+                                        onPressed: () {},
                                         icon: const Icon(Icons.camera_alt),
                                       ),
                                     ],
@@ -181,24 +179,24 @@ class _EditItemPageState extends State<EditItemPage> {
                         },
                       );
                     },
-                    child: image != null ? Image.file(image!) : Container(
-                      height: 200,
-                      margin: const EdgeInsets.only(bottom: 16),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
-                        image: DecorationImage(
-                          image: NetworkImage(widget.itemData["image"]),
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
+                    child: image != null
+                        ? Image.file(image!)
+                        : Container(
+                            height: 200,
+                            margin: const EdgeInsets.only(bottom: 16),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8),
+                              image: DecorationImage(
+                                image: NetworkImage(widget.itemData["image"]),
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
                   ),
-
-                  // Title field
                   TextFormField(
                     controller: _titleController,
                     decoration: InputDecoration(
-                      labelText: 'Title',
+                      labelText: 'Item Name',
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
@@ -213,22 +211,6 @@ class _EditItemPageState extends State<EditItemPage> {
                     },
                   ),
                   const SizedBox(height: 16),
-
-                  // Title 2 field
-                  TextFormField(
-                    controller: _title2Controller,
-                    decoration: InputDecoration(
-                      labelText: 'Title 2 (Optional)',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      filled: true,
-                      fillColor: whiteColor,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-
-                  
                   Container(
                     decoration: BoxDecoration(
                       border: Border.all(color: Colors.grey),
@@ -249,8 +231,7 @@ class _EditItemPageState extends State<EditItemPage> {
                           return DropdownMenuItem<String>(
                             value: value,
                             child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 8, horizontal: 16),
+                              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                               child: Text(value),
                             ),
                           );
@@ -264,10 +245,40 @@ class _EditItemPageState extends State<EditItemPage> {
                     ),
                   ),
                   const SizedBox(height: 16),
-
+                  TextFormField(
+                    controller: _title2Controller,
+                    decoration: InputDecoration(
+                      labelText: 'Value (Optional)',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      filled: true,
+                      fillColor: whiteColor,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: _priceController,
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                      labelText: 'Price (Rp)',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      filled: true,
+                      fillColor: whiteColor,
+                    ),
+                    onChanged: (value) {
+                      final newText = _formatNumber(value);
+                      if (newText != _priceController.text) {
+                        _priceController.value = TextEditingValue(
+                          text: newText,
+                          selection: TextSelection.collapsed(offset: newText.length),
+                        );
+                      }
+                    },
+                  ),
                   const SizedBox(height: 24),
-
-                  // Update button
                   ElevatedButton(
                     onPressed: _updateItem,
                     style: ElevatedButton.styleFrom(

@@ -7,19 +7,14 @@ class ImageNotifier extends ChangeNotifier {
   String? _networkImageUrl;
   bool _disposed = false;
 
-  // Getter untuk mendapatkan image (bisa File atau null)
   File? get image => _imageFile;
 
-  // Getter untuk mengecek apakah image adalah network image
   bool get isNetworkImage => _networkImageUrl != null && _imageFile == null;
 
-  // Getter untuk mendapatkan network image URL
   String? get networkImageUrl => _networkImageUrl;
 
-  // Getter untuk mengecek apakah notifier sudah disposed
   bool get disposed => _disposed;
 
-  // Method untuk set image dari File
   void setImage(File? newImage) {
     if (_disposed) return;
     _imageFile = newImage;
@@ -27,7 +22,6 @@ class ImageNotifier extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Method untuk set image dari URL
   void setNetworkImage(String url) {
     if (_disposed) return;
     if (url.isNotEmpty) {
@@ -37,7 +31,6 @@ class ImageNotifier extends ChangeNotifier {
     }
   }
 
-  // Method untuk reset semua image
   void resetImage() {
     if (_disposed) return;
     _imageFile = null;

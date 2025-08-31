@@ -5,6 +5,7 @@ import 'package:amorfiapp/pages/ingredients_page.dart';
 import 'package:amorfiapp/pages/production_page.dart';
 import 'package:amorfiapp/routes/custom_page_route.dart';
 import 'package:amorfiapp/shared/shared_values.dart';
+import 'package:amorfiapp/superadmin_page/main_page.dart';
 import 'package:flutter/material.dart';
 
 class SignInOptionsPage extends StatefulWidget {
@@ -24,7 +25,13 @@ class _SignInOptionsPageState extends State<SignInOptionsPage> {
   TextEditingController pinController = TextEditingController();
   bool isLoading = false;
 
-  Future<void> _showPinDialog(bool isProductionManager) async {
+  final Map<int, String> _rolePins = {
+    0: '2580',
+    1: '1470',
+    2: '3690',
+  };
+
+  Future<void> _showPinDialog(int index) async {
     pinController.clear();
     bool isDialogLoading = false;
 
@@ -69,7 +76,8 @@ class _SignInOptionsPageState extends State<SignInOptionsPage> {
                               if (pinController.text.length != _pinLength) {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
-                                    content: Text('The PIN must be 4 characters in length.'),
+                                    content: Text(
+                                        'The PIN must be 4 characters in length.'),
                                   ),
                                 );
                                 return;
@@ -80,22 +88,29 @@ class _SignInOptionsPageState extends State<SignInOptionsPage> {
                               });
 
                               try {
-                                final user = await helper.createPin(pinController.text);
-                                log(user.toString());
+                                String correctPin = _rolePins[index]!;
 
-                                if (user == null) {
+                                if (pinController.text != correctPin) {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
-                                      content: Text('Incorrect PIN. Please try again.'),
+                                      content: Text(
+                                          'Incorrect PIN. Please try again.'),
                                     ),
                                   );
-                                } else {
-                                  Navigator.of(context).pop(); // Close the dialog
-                                  if (isProductionManager) {
-                                    _navigateToPage(const ProductionPage());
-                                  } else {
-                                    _navigateToPage(const IngredientsPage());
-                                  }
+                                  return;
+                                }
+
+                                final user =
+                                    await helper.createPin(pinController.text);
+                                log(user.toString());
+
+                                Navigator.of(context).pop();
+                                if (index == 0) {
+                                  _navigateToPage(const ProductionPage());
+                                } else if (index == 1) {
+                                  _navigateToPage(const MainPageSuperadmin());
+                                } else if (index == 2) {
+                                  _navigateToPage(const IngredientsPage());
                                 }
                               } finally {
                                 setState(() {
@@ -103,13 +118,15 @@ class _SignInOptionsPageState extends State<SignInOptionsPage> {
                                 });
                               }
                             },
-                      style: ElevatedButton.styleFrom(backgroundColor: blackColor),
+                      style:
+                          ElevatedButton.styleFrom(backgroundColor: blackColor),
                       child: isDialogLoading
                           ? const SizedBox(
                               width: 20,
                               height: 20,
                               child: CircularProgressIndicator(
-                                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                valueColor:
+                                    AlwaysStoppedAnimation<Color>(Colors.white),
                                 strokeWidth: 2,
                               ),
                             )
@@ -166,6 +183,8 @@ class _SignInOptionsPageState extends State<SignInOptionsPage> {
                   _buildOptionContainer(0),
                   const SizedBox(width: 30),
                   _buildOptionContainer(1),
+                  const SizedBox(width: 30),
+                  _buildOptionContainer(2),
                 ],
               ),
             ],
@@ -185,71 +204,24 @@ class _SignInOptionsPageState extends State<SignInOptionsPage> {
   Widget _buildOptionContainer(int index) {
     return FutureBuilder<String>(
       future: FirestoreHelper().getImage(
-        index == 0 ? 'production_manager' : 'ingredients_manager'
+        index == 1
+            ? 'superadmin'
+            : index == 0
+                ? 'production_manager'
+                : 'ingredients_manager',
       ),
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Container(
-            height: 120,
-            width: 150,
-            decoration: BoxDecoration(
-              color: whiteColor,
-              boxShadow: [
-                BoxShadow(
-                  color: blackColor.withOpacity(0.2),
-                  spreadRadius: 0.1,
-                  blurRadius: 5,
-                  offset: const Offset(0, 1),
-                ),
-              ],
-              borderRadius: BorderRadius.circular(30),
-            ),
-            child: const Center(child: CircularProgressIndicator()),
-          );
+        if (snapshot.connectionState == ConnectionState.waiting ||
+            !snapshot.hasData) {
+          return _placeholderBox(child: const CircularProgressIndicator());
         }
 
         if (snapshot.hasError) {
-          return Container(
-            height: 120,
-            width: 150,
-            decoration: BoxDecoration(
-              color: whiteColor,
-              boxShadow: [
-                BoxShadow(
-                  color: blackColor.withOpacity(0.2),
-                  spreadRadius: 0.1,
-                  blurRadius: 5,
-                  offset: const Offset(0, 1),
-                ),
-              ],
-              borderRadius: BorderRadius.circular(30),
-            ),
-            child: Center(child: Text('Error: ${snapshot.error}')),
-          );
-        }
-
-        if (!snapshot.hasData) {
-          return Container(
-            height: 120,
-            width: 150,
-            decoration: BoxDecoration(
-              color: whiteColor,
-              boxShadow: [
-                BoxShadow(
-                  color: blackColor.withOpacity(0.2),
-                  spreadRadius: 0.1,
-                  blurRadius: 5,
-                  offset: const Offset(0, 1),
-                ),
-              ],
-              borderRadius: BorderRadius.circular(30),
-            ),
-            child: const Center(child: Text('No image')),
-          );
+          return _placeholderBox(child: Text('Error: ${snapshot.error}'));
         }
 
         return InkWell(
-          onTap: () => _showPinDialog(index == 0),
+          onTap: () => _showPinDialog(index),
           highlightColor: transparentColor,
           splashColor: transparentColor,
           child: Container(
@@ -279,6 +251,26 @@ class _SignInOptionsPageState extends State<SignInOptionsPage> {
           ),
         );
       },
+    );
+  }
+
+  Widget _placeholderBox({required Widget child}) {
+    return Container(
+      height: 120,
+      width: 150,
+      decoration: BoxDecoration(
+        color: whiteColor,
+        boxShadow: [
+          BoxShadow(
+            color: blackColor.withOpacity(0.2),
+            spreadRadius: 0.1,
+            blurRadius: 5,
+            offset: const Offset(0, 1),
+          ),
+        ],
+        borderRadius: BorderRadius.circular(30),
+      ),
+      child: Center(child: child),
     );
   }
 }

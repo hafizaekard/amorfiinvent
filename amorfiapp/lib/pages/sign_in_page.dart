@@ -18,7 +18,7 @@ class _SignInPageState extends State<SignInPage> {
   final FirebaseAuthService _auth = FirebaseAuthService();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  bool _isLoading = false; // Loading state variable
+  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -47,7 +47,6 @@ class _SignInPageState extends State<SignInPage> {
     String email = _emailController.text;
     String password = _passwordController.text;
 
-    // Check if email and password fields are not empty
     if (email.isEmpty || password.isEmpty) {
       print("Email and Password are required.");
       ScaffoldMessenger.of(context).showSnackBar(
@@ -57,22 +56,23 @@ class _SignInPageState extends State<SignInPage> {
     }
 
     setState(() {
-      _isLoading = true; // Set loading to true
+      _isLoading = true;
     });
 
     bool user = await _auth.signInWithEmailAndPassword(email, password);
 
     setState(() {
-      _isLoading = false; // Set loading to false
+      _isLoading = false;
     });
 
     if (user) {
       print("User successfully signed in");
-       _navigateToPage(const SignInOptionsPage()); // Redirect to homepage
+      _navigateToPage(const SignInOptionsPage());
     } else {
       print("Failed to sign in");
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Invalid email or password. Please try again.')),
+        const SnackBar(
+            content: Text('Invalid email or password. Please try again.')),
       );
     }
   }
@@ -107,7 +107,7 @@ class _SignInPageState extends State<SignInPage> {
                         fontWeight: normal,
                       ),
                     ),
-                    const SizedBox(height: 190),
+                    const SizedBox(height: 90),
                   ],
                 ),
               ),
@@ -118,7 +118,8 @@ class _SignInPageState extends State<SignInPage> {
                 const SizedBox(height: 10),
                 Text(
                   'Email',
-                  style: blackTextStyle.copyWith(fontWeight: semiBold, fontSize: 14),
+                  style: blackTextStyle.copyWith(
+                      fontWeight: semiBold, fontSize: 14),
                 ),
                 const SizedBox(height: 5),
                 SizedBox(
@@ -133,7 +134,8 @@ class _SignInPageState extends State<SignInPage> {
                 const SizedBox(height: 10),
                 Text(
                   'Password',
-                  style: blackTextStyle.copyWith(fontWeight: semiBold, fontSize: 14),
+                  style: blackTextStyle.copyWith(
+                      fontWeight: semiBold, fontSize: 14),
                 ),
                 const SizedBox(height: 5),
                 SizedBox(
@@ -155,9 +157,9 @@ class _SignInPageState extends State<SignInPage> {
                   overlayColor: WidgetStateProperty.all(transparentColor),
                 ),
                 child: Text(
-                  'Forgot Password ?', 
+                  'Forgot Password ?',
                   style: blackTextStyle.copyWith(
-                    fontSize: 13, 
+                    fontSize: 13,
                     fontWeight: semiBold,
                   ),
                 ),
@@ -167,7 +169,7 @@ class _SignInPageState extends State<SignInPage> {
             SizedBox(
               width: 500,
               child: GestureDetector(
-                onTap: _isLoading ? null : _signIn, // Disable the button when loading
+                onTap: _isLoading ? null : _signIn,
                 child: Container(
                   width: double.infinity,
                   height: 45,
@@ -176,13 +178,15 @@ class _SignInPageState extends State<SignInPage> {
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Center(
-                    child: _isLoading // Show loading indicator or text
+                    child: _isLoading
                         ? CircularProgressIndicator(
-                            valueColor: AlwaysStoppedAnimation<Color>(whiteColor),
+                            valueColor:
+                                AlwaysStoppedAnimation<Color>(whiteColor),
                           )
                         : Text(
                             "Sign In",
-                            style: whiteTextStyle.copyWith(fontSize: 14, fontWeight: bold),
+                            style: whiteTextStyle.copyWith(
+                                fontSize: 14, fontWeight: bold),
                           ),
                   ),
                 ),
@@ -194,14 +198,16 @@ class _SignInPageState extends State<SignInPage> {
               children: [
                 Text(
                   "Don't have an account?",
-                  style: blackTextStyle.copyWith(fontSize: 14, fontWeight: normal),
+                  style:
+                      blackTextStyle.copyWith(fontSize: 14, fontWeight: normal),
                 ),
                 const SizedBox(width: 5),
                 GestureDetector(
                   onTap: _navigateToSignUpPage,
                   child: Text(
                     "Sign Up",
-                    style: blackTextStyle.copyWith(fontSize: 13.5, fontWeight: semiBold),
+                    style: blackTextStyle.copyWith(
+                        fontSize: 13.5, fontWeight: semiBold),
                   ),
                 ),
               ],

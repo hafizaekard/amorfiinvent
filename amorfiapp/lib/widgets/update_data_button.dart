@@ -2,9 +2,9 @@ import 'package:amorfiapp/shared/shared_values.dart';
 import 'package:flutter/material.dart';
 
 class UpdateDataButton extends StatelessWidget {
-  final VoidCallback? onPressed; // Define an onPressed callback
+  final VoidCallback? onPressed;
 
-  const UpdateDataButton({super.key, this.onPressed}); // Accept onPressed as a parameter
+  const UpdateDataButton({super.key, this.onPressed});
 
   void _showUpdateDialog(BuildContext context) {
     showDialog(
@@ -16,18 +16,17 @@ class UpdateDataButton extends StatelessWidget {
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop(); // Close dialog
+                Navigator.of(context).pop();
               },
               child: const Text('Cancel'),
             ),
             TextButton(
               onPressed: () {
-                // Perform refresh action
-                Navigator.of(context).pop(); // Close dialog after confirmation
+                Navigator.of(context).pop();
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('Data is updating...')),
                 );
-                onPressed?.call(); // Call the passed in onPressed function
+                onPressed?.call();
               },
               child: const Text('Update'),
             ),
@@ -40,19 +39,20 @@ class UpdateDataButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => _showUpdateDialog(context), // Show dialog when button is clicked
+      onTap: () => _showUpdateDialog(context),
       child: Container(
-        width: 65,  // Adjust the size as per PrintButton
-        height: 40, // Adjust the size as per PrintButton
+        width: 65,
+        height: 40,
         decoration: BoxDecoration(
-          color: blueColor, // Background color (adjust if needed)
-          borderRadius: const BorderRadius.only(topRight: Radius.circular(8), bottomRight: Radius.circular(8)), // Border radius
+          color: blueColor,
+          borderRadius: const BorderRadius.only(
+              topRight: Radius.circular(8), bottomRight: Radius.circular(8)),
         ),
         child: Center(
           child: Icon(
-            Icons.autorenew_rounded, // Refresh icon
-            size: 30, // Icon size
-            color: whiteColor, // Icon color
+            Icons.autorenew_rounded,
+            size: 30,
+            color: whiteColor,
           ),
         ),
       ),

@@ -2,6 +2,7 @@ import 'package:amorfiapp/helper/firebase_auth_services.dart';
 import 'package:amorfiapp/pages/sign_in_page.dart';
 import 'package:amorfiapp/routes/custom_page_route.dart';
 import 'package:amorfiapp/shared/shared_values.dart';
+import 'package:amorfiapp/widgets/back_button_custom.dart';
 import 'package:amorfiapp/widgets/form_container.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -19,6 +20,14 @@ class _SignUpPageState extends State<SignUpPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
+  String? selectedRole;
+
+  void _selectRole(String role) {
+    setState(() {
+      selectedRole = role;
+    });
+  }
+
   @override
   void dispose() {
     _nameController.dispose();
@@ -31,6 +40,22 @@ class _SignUpPageState extends State<SignUpPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: whiteColor,
+      appBar: AppBar(
+        backgroundColor: newBlueColor,
+        shape: Border(bottom: BorderSide(color: blueColor.withOpacity(0.2))),
+        automaticallyImplyLeading: false,
+        titleSpacing: 15,
+        title: Row(
+          children: [
+            BackButtonCustom(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+            const SizedBox(width: 5),
+          ],
+        ),
+      ),
       body: SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -38,7 +63,7 @@ class _SignUpPageState extends State<SignUpPage> {
             Align(
               alignment: Alignment.centerLeft,
               child: Padding(
-                padding: const EdgeInsets.only(left: 100, top: 75),
+                padding: const EdgeInsets.only(left: 100, top: 50),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -57,7 +82,7 @@ class _SignUpPageState extends State<SignUpPage> {
                         fontWeight: normal,
                       ),
                     ),
-                    const SizedBox(height: 190),
+                    const SizedBox(height: 50),
                   ],
                 ),
               ),
@@ -68,7 +93,8 @@ class _SignUpPageState extends State<SignUpPage> {
                 const SizedBox(height: 10),
                 Text(
                   'Name',
-                  style: blackTextStyle.copyWith(fontWeight: semiBold, fontSize: 14),
+                  style: blackTextStyle.copyWith(
+                      fontWeight: semiBold, fontSize: 14),
                 ),
                 const SizedBox(height: 5),
                 SizedBox(
@@ -83,7 +109,8 @@ class _SignUpPageState extends State<SignUpPage> {
                 const SizedBox(height: 10),
                 Text(
                   'Email',
-                  style: blackTextStyle.copyWith(fontWeight: semiBold, fontSize: 14),
+                  style: blackTextStyle.copyWith(
+                      fontWeight: semiBold, fontSize: 14),
                 ),
                 const SizedBox(height: 5),
                 SizedBox(
@@ -98,7 +125,8 @@ class _SignUpPageState extends State<SignUpPage> {
                 const SizedBox(height: 10),
                 Text(
                   'Password',
-                  style: blackTextStyle.copyWith(fontWeight: semiBold, fontSize: 14),
+                  style: blackTextStyle.copyWith(
+                      fontWeight: semiBold, fontSize: 14),
                 ),
                 const SizedBox(height: 5),
                 SizedBox(
@@ -110,7 +138,93 @@ class _SignUpPageState extends State<SignUpPage> {
                     keyboardType: TextInputType.visiblePassword,
                   ),
                 ),
-                const SizedBox(height: 30),
+                const SizedBox(height: 10),
+                Text('Choose a role',
+                    style: blackTextStyle.copyWith(
+                        fontWeight: semiBold, fontSize: 14)),
+                const SizedBox(height: 10),
+                SizedBox(
+                  width: 500,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () => _selectRole('Production Manager'),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(vertical: 10),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: selectedRole == 'Production Manager'
+                                    ? blackColor
+                                    : blackColor,
+                              ),
+                              borderRadius: BorderRadius.circular(10),
+                              color: selectedRole == 'Production Manager'
+                                  ? whiteColor
+                                  : whiteColor,
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Radio<String>(
+                                  value: 'Production Manager',
+                                  groupValue: selectedRole,
+                                  onChanged: (value) {
+                                    _selectRole(value!);
+                                  },
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  'Production Manager',
+                                  style: blackTextStyle.copyWith(fontSize: 14),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 20),
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () => _selectRole('Ingredient Manager'),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(vertical: 10),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: selectedRole == 'Ingredient Manager'
+                                    ? blackColor
+                                    : blackColor,
+                              ),
+                              borderRadius: BorderRadius.circular(10),
+                              color: selectedRole == 'Ingredient Manager'
+                                  ? whiteColor
+                                  : whiteColor,
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Radio<String>(
+                                  value: 'Ingredient Manager',
+                                  groupValue: selectedRole,
+                                  onChanged: (value) {
+                                    _selectRole(value!);
+                                  },
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  'Ingredient Manager',
+                                  style: blackTextStyle.copyWith(fontSize: 14),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 20),
               ],
             ),
             SizedBox(
@@ -121,13 +235,14 @@ class _SignUpPageState extends State<SignUpPage> {
                   width: double.infinity,
                   height: 45,
                   decoration: BoxDecoration(
-                    color: blackColor,
+                    color: blueColor,
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Center(
                     child: Text(
-                      "Sign Up",
-                      style: whiteTextStyle.copyWith(fontSize: 14, fontWeight: bold),
+                      "Next",
+                      style: whiteTextStyle.copyWith(
+                          fontSize: 14, fontWeight: bold),
                     ),
                   ),
                 ),
@@ -139,17 +254,22 @@ class _SignUpPageState extends State<SignUpPage> {
               children: [
                 Text(
                   "Already have an account?",
-                  style: blackTextStyle.copyWith(fontSize: 14, fontWeight: normal),
+                  style:
+                      blackTextStyle.copyWith(fontSize: 14, fontWeight: normal),
                 ),
                 const SizedBox(width: 5),
                 GestureDetector(
                   onTap: _navigateToSignInPage,
                   child: Text(
                     "Sign In",
-                    style: blackTextStyle.copyWith(fontSize: 13.5, fontWeight: semiBold),
+                    style: blackTextStyle.copyWith(
+                        fontSize: 13.5, fontWeight: semiBold),
                   ),
                 ),
               ],
+            ),
+            SizedBox(
+              height: 50,
             )
           ],
         ),
@@ -166,29 +286,25 @@ class _SignUpPageState extends State<SignUpPage> {
     String email = _emailController.text;
     String password = _passwordController.text;
 
-    // Ensure all fields are filled
     if (name.isEmpty || email.isEmpty || password.isEmpty) {
       print('All fields are required');
       return;
     }
 
-    // Sign up the user using FirebaseAuthService
     print('before');
     User? user = await _auth.signUpWithEmailAndPassword(name, email, password);
     print('after');
 
-
     if (user != null) {
-  print("User successfully created");
-  ScaffoldMessenger.of(context).showSnackBar(
-    const SnackBar(content: Text('User successfully created! Please verify your email.'))
-  );
-  Navigator.pushNamed(context, "/signin");
-} else {
-  print("Failed to create user");
-  ScaffoldMessenger.of(context).showSnackBar(
-    const SnackBar(content: Text('Failed to create user. Please try again.'))
-  );
-}
+      print("User successfully created");
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content:
+              Text('User successfully created! Please verify your email.')));
+      Navigator.pushNamed(context, "/signin");
+    } else {
+      print("Failed to create user");
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('Failed to create user. Please try again.')));
+    }
   }
 }

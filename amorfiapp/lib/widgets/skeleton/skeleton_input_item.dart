@@ -26,7 +26,6 @@ class SkeletonItemPage extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              // Skeleton for the image
               Container(
                 width: 50,
                 height: 50,
@@ -36,7 +35,6 @@ class SkeletonItemPage extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 16),
-              // Skeleton for the title
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -60,11 +58,9 @@ class SkeletonItemPage extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 16),
-              // Skeleton for the quantity controls
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  // Skeleton for the decrease button
                   Container(
                     width: 30,
                     height: 30,
@@ -74,7 +70,6 @@ class SkeletonItemPage extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 8),
-                  // Skeleton for the quantity input
                   Container(
                     width: 50,
                     height: 30,
@@ -84,7 +79,6 @@ class SkeletonItemPage extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 8),
-                  // Skeleton for the increase button
                   Container(
                     width: 30,
                     height: 30,

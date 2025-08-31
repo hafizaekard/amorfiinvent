@@ -30,7 +30,7 @@ class _PickImageState extends State<PickImage> {
                 child: Material(
                   borderRadius: BorderRadius.circular(8),
                   child: Container(
-                    width: 160, // Lebih lebar dari sebelumnya
+                    width: 160,
                     height: 80,
                     padding: const EdgeInsets.symmetric(
                         horizontal: 16, vertical: 12),
@@ -43,7 +43,7 @@ class _PickImageState extends State<PickImage> {
                       children: [
                         IconButton(
                           padding: EdgeInsets.zero,
-                          iconSize: 32, // Ukuran icon yang lebih kecil
+                          iconSize: 32,
                           onPressed: () async {
                             final result = await imagePicker
                                 .pickImage(ImageSource.gallery);
@@ -58,7 +58,7 @@ class _PickImageState extends State<PickImage> {
                         ),
                         IconButton(
                           padding: EdgeInsets.zero,
-                          iconSize: 32, // Ukuran icon yang lebih kecil
+                          iconSize: 32,
                           onPressed: () async {
                             final result =
                                 await imagePicker.pickImage(ImageSource.camera);
